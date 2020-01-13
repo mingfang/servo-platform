@@ -1,4 +1,4 @@
-var Ticker = require('FSM/ticker');
+var Ticker = require('../../FSM/ticker');
 var _tickerInst = null;
 class MockupTicker extends Ticker {
 

@@ -5,7 +5,7 @@ const fsmModel = require("../models/fsmmodel");
 const dblogger = require('../utils/dblogger');
 const _ = require("lodash");
 const pathLib = require('path');
-const utils = require('utils/utils');
+const utils = require('../utils/utils');
 
 const ensureProjectsDir = (dir) => {
   const userDir = utils.CONVOCODE_DIR + "/" + dir;
@@ -26,8 +26,8 @@ const ensureProjectsDir = (dir) => {
 
 /**
  * list the fsms of the user at req.user
- * @param {*} req 
- * @param {*} res 
+ * @param {*} req
+ * @param {*} res
  */
 const list = (req, res) => {
   dblogger.log('b3.list. start time:', Date.now(), 'req.user.projectsDir=' + req.user.projectsDir);
@@ -35,48 +35,48 @@ const list = (req, res) => {
     dblogger.assert(req.user.projectsDir, req.user, 'need user id on request');
     fsmModel.getAllFSMs(req.user.projectsDir, true /*drafts*/ ).then(function (fsms) {
       setTimeout(function () {
-        try {
-          var rootFSMs = {};
-          // Filter only user's fsms
-          const userFSMs = fsms;
-          /*_.pickBy(fsms, (fsm) => {
-                      return fsm.path.split(pathLib.posix.sep)[1] == userDir;
-                    });*/
-          for (let id in userFSMs) {
-            const fsm = userFSMs[id];
-            if (!fsm.isRoot) {
-              continue;
-            }
-            var clone = JSON.parse(JSON.stringify(fsm));
-            fsm.trees = [];
-            fsm.trees.push(clone);
-            rootFSMs[id] = fsm;
+      try {
+        var rootFSMs = {};
+        // Filter only user's fsms
+        const userFSMs = fsms;
+        /*_.pickBy(fsms, (fsm) => {
+                    return fsm.path.split(pathLib.posix.sep)[1] == userDir;
+                  });*/
+        for (let id in userFSMs) {
+          const fsm = userFSMs[id];
+          if (!fsm.isRoot) {
+            continue;
           }
-          for (let id in userFSMs) {
-            const fsm = userFSMs[id];
-            if (fsm.isRoot) {
-              continue;
-            }
-            const pathArr = fsm.path.split(pathLib.posix.sep);
-            const rootFSMid = pathArr[0] + pathLib.posix.sep + pathArr[1] + pathLib.posix.sep + pathArr[2] +
-              pathLib.posix.sep + pathArr[3] + pathLib.posix.sep + pathArr[3] + '#json';
-            if (!rootFSMid || !rootFSMs[rootFSMid]) {
-              dblogger.error('problem in path. unsupported folder structure:' + fsm.path);
-            } else {
-
-              rootFSMs[rootFSMid].trees.unshift(fsm);
-            }
-          }
-          for (let rootFSMid in rootFSMs) {
-            var last = rootFSMs[rootFSMid].trees.pop();
-            rootFSMs[rootFSMid].trees.sort((a, b) => a.id.toLowerCase().localeCompare(b.id.toLowerCase()));
-            rootFSMs[rootFSMid].trees.push(last);
-          }
-          dblogger.log('b3.list. end time:', Date.now());
-          return res.send(rootFSMs);
-        } catch (ex) {
-          return res.status(500).send(ex);
+          var clone = JSON.parse(JSON.stringify(fsm));
+          fsm.trees = [];
+          fsm.trees.push(clone);
+          rootFSMs[id] = fsm;
         }
+        for (let id in userFSMs) {
+          const fsm = userFSMs[id];
+          if (fsm.isRoot) {
+            continue;
+          }
+          const pathArr = fsm.path.split(pathLib.posix.sep);
+          const rootFSMid = pathArr[0] + pathLib.posix.sep + pathArr[1] + pathLib.posix.sep + pathArr[2] +
+              pathLib.posix.sep + pathArr[3] + pathLib.posix.sep + pathArr[3] + '#json';
+          if (!rootFSMid || !rootFSMs[rootFSMid]) {
+            dblogger.error('problem in path. unsupported folder structure:' + fsm.path);
+          } else {
+
+            rootFSMs[rootFSMid].trees.unshift(fsm);
+          }
+        }
+        for (let rootFSMid in rootFSMs) {
+          var last = rootFSMs[rootFSMid].trees.pop();
+          rootFSMs[rootFSMid].trees.sort((a, b) => a.id.toLowerCase().localeCompare(b.id.toLowerCase()));
+          rootFSMs[rootFSMid].trees.push(last);
+        }
+        dblogger.log('b3.list. end time:', Date.now());
+        return res.send(rootFSMs);
+      } catch (ex) {
+        return res.status(500).send(ex);
+      }
       }, 100);
     }).catch(function (err) {
       return res.status(500).send(err);
@@ -88,8 +88,8 @@ const list = (req, res) => {
 
 /**
  * loads the fsms
- * @param {*} req 
- * @param {*} res 
+ * @param {*} req
+ * @param {*} res
  */
 const load = (req, res) => {
   try {
@@ -117,8 +117,8 @@ const load = (req, res) => {
 
 /**
  * save an fsm of req.body.path
- * @param {*} req 
- * @param {*} res 
+ * @param {*} req
+ * @param {*} res
  */
 const save = (req, res) => {
   try {
@@ -195,8 +195,8 @@ const save = (req, res) => {
 
 /**
  * publish an fsm of req.body.name
- * @param {*} req 
- * @param {*} res 
+ * @param {*} req
+ * @param {*} res
  */
 const publish = (req, res) => {
   try {
@@ -229,8 +229,8 @@ const publish = (req, res) => {
 };
 /**
  * remove an fsm of req.body.path
- * @param {*} req 
- * @param {*} res 
+ * @param {*} req
+ * @param {*} res
  */
 const remove = (req, res) => {
   try {

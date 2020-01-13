@@ -1,18 +1,18 @@
-var dblogger = require('utils/dblogger');
-var b3 = require('FSM/core/b3');
-var Action = require('FSM/core/action');
-var utils = require('utils/utils');
+var dblogger = require('../../utils/dblogger');
+var b3 = require('../core/b3');
+var Action = require('../core/action');
+var utils = require('../../utils/utils');
 var _ = require('underscore');
-var Tick = require('FSM/core/tick');
+var Tick = require('../core/tick');
 /**
  *
- * Actions leaf nodes are were the action happens. 
- * The actions are used for read/write operations and interacting with the user 
- * @module Actions 
+ * Actions leaf nodes are were the action happens.
+ * The actions are used for read/write operations and interacting with the user
+ * @module Actions
  * */
 
 /**
- * AddScoreAction sets a defined score at 
+ * AddScoreAction sets a defined score at
  * the nearest ScoreSelector node ancestor
  * @private
  */
@@ -23,12 +23,12 @@ class AddScoreAction extends Action {
 
     super();
     this.title = this.name = 'AddScoreAction';
-    /** 
+    /**
      * Node parameters
      * @property parameters
      * @type {Object}
      * @property  {ExpressionString} parameters.score an expression setting the score to add
-     *  
+     *
      */
     this.parameters = _.extend(this.parameters, {
       'score': 0.5
@@ -67,11 +67,11 @@ class AddScoreAction extends Action {
     }
 
     var isChildAScorer = parent.name.indexOf('ScoreSelector') > -1 && parent.isScorer(tick, node);
-    // if parent is a (first) scoreSelector 
+    // if parent is a (first) scoreSelector
     // and this node is a descendent of a scorer,
     // or the parent is the root
     if (isChildAScorer || !grandParentId) {
-      // found! 
+      // found!
       return {
         context: parent,
         scorer: node,
@@ -84,7 +84,7 @@ class AddScoreAction extends Action {
 
   /**
    * adds the score after evaluating it
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @private
    */
   tick(tick) {

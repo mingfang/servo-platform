@@ -1,10 +1,10 @@
-var b3 = require('FSM/core/b3');
+var b3 = require('../core/b3');
 var _ = require('underscore');
-var Action = require('FSM/core/action');
-var utils = require('utils/utils');
-var dblogger = require('utils/dblogger');
+var Action = require('../core/action');
+var utils = require('../../utils/utils');
+var dblogger = require('../../utils/dblogger');
 /**
- * Set fields across composite (global,context, volatile, local and message) memories. 
+ * Set fields across composite (global,context, volatile, local and message) memories.
  * fieldName and fieldValue should have a dot notation with the object name. Eg: message.text, context.amount etc ';
  *  @memberof module:Actions
  */
@@ -15,7 +15,7 @@ class SetFieldAction extends Action {
    *
    */
   /**
-   * 
+   *
    * constructor
    */
   constructor(settings) {

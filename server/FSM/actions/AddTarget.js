@@ -1,12 +1,12 @@
 // namespace:
-var b3 = require('FSM/core/b3');
-var Action = require('FSM/core/action')
+var b3 = require('../core/b3');
+var Action = require('../core/action')
 var _ = require('underscore');
-var dblogger = require('utils/dblogger');
-var MessageModel = require('models/message-model');
-var ContextManager = require('FSM/contextManager');
+var dblogger = require('../../utils/dblogger');
+var MessageModel = require('../../models/message-model');
+var ContextManager = require('../contextManager');
 /**
- * Add a new message to the queue, as if it came from the user. 
+ * Add a new message to the queue, as if it came from the user.
  * text, entity name, value and intentId are strings - meaning, if a template is needed use <%= %>"
  *  @memberof module:Actions
  **/
@@ -39,7 +39,7 @@ class AddTarget extends Action {
   /**
    * Tick method.
    *
-   * @private 
+   * @private
    * @param {Tick} tick A tick instance.
    * @return {Constant}  return `b3.SUCCESS`.
    **/

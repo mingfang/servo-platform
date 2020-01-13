@@ -1,5 +1,5 @@
-var b3 = require('FSM/core/b3');
-var Action = require('FSM/core/action');
+var b3 = require('../core/b3');
+var Action = require('../core/action');
 var _ = require('underscore');
 /**
  * sends a message and continue. returns RUNNING until send acknowledged, SUCCESS afterwards
@@ -47,14 +47,14 @@ class GeneralMessage extends Action {
 
   /**
    * set a wake up flag based on the entry target, for session-based clients
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   open(tick) {
     console.log('open GeneralMessage ' + this.summary(tick))
   }
   /**
    * reset a wake up flag , for session-based clients
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   close(tick) {
     if (tick.target && tick.target.isFlowControl()) {

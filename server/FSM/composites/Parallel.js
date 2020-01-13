@@ -1,5 +1,5 @@
-var b3 = require('FSM/core/b3');
-var Composite = require('FSM/core/composite');
+var b3 = require('../core/b3');
+var Composite = require('../core/composite');
 /**
  * @private
  */

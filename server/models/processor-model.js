@@ -1,7 +1,7 @@
 var config = require("../config");
 var Promise = require('promise');
 var dblogger = require("../utils/dblogger.js");
-var cacheFactory = require('models/cache-factory');
+var cacheFactory = require('./cache-factory');
 var fs = require('fs');
 
 // use a cache with 10 min expiration so we dont have to read from the disk

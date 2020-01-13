@@ -1,5 +1,5 @@
 var NodeCache = require('node-cache');
-var dblogger = require('utils/dblogger');
+var dblogger = require('../utils/dblogger');
 
 /**
  *  static factory
@@ -8,8 +8,8 @@ class CacheFactory {
 
   /**
    * main factory megthod
-   * @param {*} options 
-   * @param {*} cacheName 
+   * @param {*} options
+   * @param {*} cacheName
    */
   static createCache(options, cacheName = "node-cache") {
 

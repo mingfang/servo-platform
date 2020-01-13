@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
-var b3 = require('FSM/core/b3');
-var Action = require('FSM/core/action');
+var b3 = require('../core/b3');
+var Action = require('../core/action');
 var _ = require('underscore');
-var dblogger = require('utils/dblogger');
-var utils = require('utils/utils');
-var fsmModel = require('models/fsmmodel');
+var dblogger = require('../../utils/dblogger');
+var utils = require('../../utils/utils');
+var fsmModel = require('../../models/fsmmodel');
 
-var processModel = require('models/processmodel');
+var processModel = require('../../models/processmodel');
 /**
  * connect and query MongoDB according to the fields,  on an collection provided in collectionName." +
  * stores result in targetFieldName.
@@ -23,14 +23,14 @@ class GetProcessDataByKey extends Action {
          * Node parameters
          * @property parameters
          * @type {Object}
-         * @property {Object} parameters 
+         * @property {Object} parameters
          * @property {string} parameters.keyName key name to search on
-         * @property {string} parameters.keyValue to match 
+         * @property {string} parameters.keyValue to match
          * @property {MemoryField} settings.targetFieldName: to place result in
          * @property {ExpressionString} settings.queryDataFieldName - a field name on the global data area of the retrieved process
          * @property {string}  ettings.queryFieldName - a field name on the the data item to search from
          *  @property {string} setting.queryCommand: either LAST,HIGHTODAY or HIGHEST
-         * 
+         *
          **/
         this.parameters = _.extend(this.parameters, {
             'keyName': '',
@@ -51,8 +51,8 @@ class GetProcessDataByKey extends Action {
     }
 
     /**
-     * 
-     * @param {Process} processObj 
+     *
+     * @param {Process} processObj
      */
     makeQuery(processObj) {
         let data = processObj._baseMemory.data[this.properties.queryDataFieldName];
@@ -99,7 +99,7 @@ class GetProcessDataByKey extends Action {
 
     /**
      * searches the sourceField
-     * @param {*} tick 
+     * @param {*} tick
      * @private
      */
     tick(tick) {
@@ -138,10 +138,10 @@ class GetProcessDataByKey extends Action {
 
     /**
      * safe(r) eval code for the query
-     * @param {*} data 
-     * @param {string} codeToEval 
-     * @param {*} collection 
-     * @param {function} cb 
+     * @param {*} data
+     * @param {string} codeToEval
+     * @param {*} collection
+     * @param {function} cb
      */
     evalQuery(data, codeToEval, collection, cb) {
         // eslint-disable-next-line no-unused-vars

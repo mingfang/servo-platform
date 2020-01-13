@@ -1,19 +1,19 @@
-var b3 = require('FSM/core/b3');
-var Composite = require('FSM/core/composite');
+var b3 = require('../core/b3');
+var Composite = require('../core/composite');
 var _ = require('underscore');
-var dblogger = require('utils/dblogger');
-var ContextManager = require('FSM/contextManager');
-var statsManager = require('FSM/statsManager');
+var dblogger = require('../../utils/dblogger');
+var ContextManager = require('../contextManager');
+var statsManager = require('../statsManager');
 
 /**
  * Sends the message based on prompt or view properties. image is an html file name under images folder.
  * imageDataArrayName is the composite field name for an array object that contains data for the images.
  * Once sent, waits for a response and then directs the flow to the child found according to the intents/entities map.
- * Selects by message intent & entities the children. A context is created for each child. 
- * Contexts may have an expected intentId (a string or a regex) and entities, or a helper:true that would occur as default, if no matching intent was found 
- * If execution has a context already, it will continue to tick the current child, unless a bottom-up context search 
+ * Selects by message intent & entities the children. A context is created for each child.
+ * Contexts may have an expected intentId (a string or a regex) and entities, or a helper:true that would occur as default, if no matching intent was found
+ * If execution has a context already, it will continue to tick the current child, unless a bottom-up context search
  *  changes the selected child.
- * If no child is selected, Helper child is entered every tick. 
+ * If no child is selected, Helper child is entered every tick.
  * On a timeout (user haven't answered in runningTimeoutSec) the timeout child is entered. If there's no timeout child, resort to default timeout behaviour (see BaseNode).
  * Node is closed when no more children are running. The entities from last child are  mapped to the parent, and all contexts are cleared.
  * The target is mapped to the expected intents and entities.
@@ -29,7 +29,7 @@ class AskAndMap extends Composite {
     this.title = this.name = 'AskAndMap';
     /**
      * An object in the form of {"language code":"string"}. eg {"en":"my name is John"}
-     * @typedef TextObject 
+     * @typedef TextObject
      * @property {string} string: language code
      * @property {string} string: text
      */
@@ -120,15 +120,15 @@ class AskAndMap extends Composite {
   /**
    *if we are on wakeup, and this is an opened leaf which is waiting for an answer
    * it could be:
-   * 1. leaf was opened, client closed, client opened. if the leaf is AskAndWait, 
+   * 1. leaf was opened, client closed, client opened. if the leaf is AskAndWait,
    * this means that the leaf was requesting answer that never came
    * so we need to re-play the node on the client upon wakeup
    * 2. leaf was opened on wakeup, asked the question, no ack yet, and now its second tick.
    * so we dont  need to replay upon wakeup
    *3. leaf was opened, server closed, server re-opened. client still SHOULD have an open
-   *session, we upon server re-run we will come here, node isOpened, waitcode on running, 
+   *session, we upon server re-run we will come here, node isOpened, waitcode on running,
    *waiting for an answer. This will NOT work for Alexa. TODO: solve that
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @private
    */
   enter(tick) {
@@ -142,9 +142,9 @@ class AskAndMap extends Composite {
   }
 
   /**
-   * for AskAndMap, return true if entity was used, period, regardless of the direction 
+   * for AskAndMap, return true if entity was used, period, regardless of the direction
    * (for ContextSelector on downwards direction you can use for mappings even if used )
-   * @param {Target} target 
+   * @param {Target} target
    * @param {*} ett : entity
    * @param {string?} searchDirection  "upwards" or "downwards"
    * @returns {boolean}
@@ -168,7 +168,7 @@ class AskAndMap extends Composite {
 
     dblogger.assert(this.children[this.children.length - 1] && !this.children[this.children.length - 1].properties.helper, "first child in a AskAndMap must not be a helper");
 
-    // initialize context  
+    // initialize context
     let foundContexts = this.contextManager.open(tick);
     dblogger.assert(foundContexts.length === 1, 'foundContext minimum is 0, first one is "no context"');
     // if the target caused that we already have an answer, if no need any more to ask the question, dont ask
@@ -185,7 +185,7 @@ class AskAndMap extends Composite {
 
   /**
    * close
-   * @param {*} tick 
+   * @param {*} tick
    * @private
    */
   close(tick, status) {
@@ -202,7 +202,7 @@ class AskAndMap extends Composite {
 
   /**
    * get current context child
-   * @param {*} tick 
+   * @param {*} tick
    */
   currentContextChild(tick) {
     var childIndex = this.local(tick, 'runningChild');
@@ -218,13 +218,13 @@ class AskAndMap extends Composite {
 
   /**
    * map entities and tick down
-   * 
-   * The context can be searched only below a certain point in the tree. 
+   *
+   * The context can be searched only below a certain point in the tree.
    * If the conversation is at a certain context, and the context is switched to a different context, then
-   * that switch point is the place to start. otherwise, we dont have a context yet, so we search from the top 
-   * 
-   * @param {Tick} tick 
-   * @param {*} target 
+   * that switch point is the place to start. otherwise, we dont have a context yet, so we search from the top
+   *
+   * @param {Tick} tick
+   * @param {*} target
    */
   tick(tick) {
 
@@ -277,7 +277,7 @@ class AskAndMap extends Composite {
           this._close(tick);
 
           //**  it means we got here from above - it means, we are with the right context for the anscestor context selector
-          // the mapping happened already - for the context on which we are. 
+          // the mapping happened already - for the context on which we are.
           // if we have mappings here, it will need to get mapped to parent to be useful
           // so remark - this.contextManager.mapEntitiesToContext(tick, this.contextProperties());
           this.target(tick, "remove");
@@ -306,7 +306,7 @@ class AskAndMap extends Composite {
    * send a message method.
    *
    * output a message asynchrously
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @param {string} [fieldName] - to use when building a message. ,instead of prompt
    * @return {Promise} A state constant.
    **/
@@ -336,7 +336,7 @@ class AskAndMap extends Composite {
 
   /**
    * selects a timeout child if exists
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   handleTimeout(tick) {
 
@@ -368,7 +368,7 @@ class AskAndMap extends Composite {
 
   /**
    * the context children are all the children
-   * 
+   *
    */
   contextChildren() {
     return this.children;

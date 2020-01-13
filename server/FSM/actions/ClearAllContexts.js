@@ -1,13 +1,13 @@
 // namespace:
-var b3 = require('FSM/core/b3');
-var Action = require('FSM/core/action')
+var b3 = require('../core/b3');
+var Action = require('../core/action')
 var _ = require('underscore');
 
 
 /**
- * 
- * finds closest context managed ancestor and clear all its contexts. 
- *  @memberof module:Actions 
+ *
+ * finds closest context managed ancestor and clear all its contexts.
+ *  @memberof module:Actions
  **/
 class ClearAllContexts extends Action {
 
@@ -21,12 +21,12 @@ class ClearAllContexts extends Action {
     var parameters = {
       leaveCurrent: false
     };
-    /** 
+    /**
      * Node parameters
      * @property parameters
      * @type {Object}
      * @property  {boolean} parameters.leaveCurrent if true, leaves current context intact
-     *  
+     *
      */
     this.parameters = _.extend(this.parameters, {
       leaveCurrent: false

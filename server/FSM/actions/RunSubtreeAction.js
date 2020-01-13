@@ -1,11 +1,11 @@
-var b3 = require('FSM/core/b3');
+var b3 = require('../core/b3');
 var _ = require('underscore');
-var Action = require('FSM/core/action');
-var FSM = require("FSM/fsm-manager");
+var Action = require('../core/action');
+var FSM = require("../fsm-manager");
 var uuid = require('uuid');
-var fsmModel = require('models/fsmmodel')
-var dblogger = require('utils/dblogger');
-var TreeNode = require('FSM/core/treeNode');
+var fsmModel = require('../../models/fsmmodel')
+var dblogger = require('../../utils/dblogger');
+var TreeNode = require('../core/treeNode');
 // TODO: fix
 class RunSubtreeAction extends Action {
   /**
@@ -27,7 +27,7 @@ class RunSubtreeAction extends Action {
 
   /**
    * reset the step
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   open(tick) {
     tick.process.set('step', 0, tick.tree.id, this.id);
@@ -73,7 +73,7 @@ class RunSubtreeAction extends Action {
       // create unique id for the new tree
       var new_fsm_id = 'dst:' + this.id + ":" + subtreeId;
       fsmModel.get(subtreeId, tick.process.userId).then((fsm) => {
-        // and load into a new node 
+        // and load into a new node
         FSM.loadBehaviorTree(fsm, tick.process, this.id, new_fsm_id).then((subtree) => {
           var dynamicNode = {
             name: 'name ' + new_fsm_id,
@@ -86,7 +86,7 @@ class RunSubtreeAction extends Action {
             cat: 'flow'
           }, 'loading new RunSubtreeAction dynamic subtree', dynamicNode.id, new_fsm_id);
           var node1 = new TreeNode(dynamicNode, subtree);
-          node1.tree = tick.tree; // node1 belongs to the tick.tree - meaning, its a node under that node 
+          node1.tree = tick.tree; // node1 belongs to the tick.tree - meaning, its a node under that node
 
 
           this.waitCode(tick, b3.RUNNING());
@@ -98,7 +98,7 @@ class RunSubtreeAction extends Action {
           this.tickIfNeeded(tick, step);
 
         }).catch((ex) => {
-          dblogger.error('FSM.loadBehaviorTree failed:', ex);
+          dblogger.error('...loadBehaviorTree failed:', ex);
           this.waitCode(tick, b3.ERROR());
         });
       }).catch((ex) => {

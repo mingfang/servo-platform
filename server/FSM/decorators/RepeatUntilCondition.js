@@ -1,23 +1,23 @@
 /**
  * RepeatUntilCondition
- * Copyright (c) 2017 Servo Labs Inc.  
- * Copyright (c) Renato de Pontes Pereira.  
+ * Copyright (c) 2017 Servo Labs Inc.
+ * Copyright (c) Renato de Pontes Pereira.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to 
- * deal in the Software without restriction, including without limitation the 
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
  * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is 
+ * sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  **/
@@ -27,13 +27,13 @@ var b3 = require('../core/b3')
 var Decorator = require('../core/decorator')
 var _ = require('underscore');
 
-var utils = require('utils/utils');
-var dblogger = require('utils/dblogger');
+var utils = require('../../utils/utils');
+var dblogger = require('../../utils/dblogger');
 
 /**
  * Repeats until a condition is true. The condition compare memory fields
  * left and right operands should have a dot notation with the object name. Eg: message.text, context.amount etc.
- * Operator could be any logical operator like ===, <, <==, !==, ==> etc. 
+ * Operator could be any logical operator like ===, <, <==, !==, ==> etc.
  * Side effects: sets context.repeatCount
  * @memberof module:Decorators
  **/
@@ -53,8 +53,8 @@ class RepeatUntilCondition extends Decorator {
          * @type {Object}
          * @property {ExpressionString|MemoryField} parameters.left
          * @property {Operator} parameters.operator - logical operator
-         * @property {ExpressionString|MemoryField} parameters.right 
-         *  
+         * @property {ExpressionString|MemoryField} parameters.right
+         *
          **/
         this.parameters = _.extend(this.parameters, {
             'left': '',

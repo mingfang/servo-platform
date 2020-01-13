@@ -1,15 +1,15 @@
-var b3 = require('FSM/core/b3');
-var Condition = require('FSM/core/condition');
-var utils = require('utils/utils');
+var b3 = require('../core/b3');
+var Condition = require('../core/condition');
+var utils = require('../../utils/utils');
 var _ = require('underscore');
-var Tick = require('FSM/core/tick');
+var Tick = require('../core/tick');
 /**
- * This checks the time from the last run of the 
+ * This checks the time from the last run of the
  * controller or convo this node is in
  */
 class TimeFromMyLastRun extends Condition {
   /**
-   * @param {object} settings 
+   * @param {object} settings
    */
   constructor(settings) {
 
@@ -50,11 +50,11 @@ class TimeFromMyLastRun extends Condition {
       grandParentId = parent.parentId;
     }
 
-    // if parent is a (first) scoreSelector 
+    // if parent is a (first) scoreSelector
     // and this node is a descendent of a scorer,
     // or the parent is the root
     if (parent.name.indexOf('ScoreSelector') > -1 || !grandParentId) {
-      // found! 
+      // found!
       // return the conversation index
       var isChildAScorer = parent.isScorer(tick, node);
       let convoIndex = parent.childIndex(node.id);
@@ -73,7 +73,7 @@ class TimeFromMyLastRun extends Condition {
 
   /**
    * adds the score after evaluating it
-   * @param {object} tick 
+   * @param {object} tick
    */
   tick(tick) {
 
@@ -84,7 +84,7 @@ class TimeFromMyLastRun extends Condition {
 
     // now search up the tree
     var ctxObj = this.findScoreSelector(this, tick);
-    // now see if its passed 
+    // now see if its passed
     var lastTime = ctxObj.context.lastTimeForConvo({
       tree: ctxObj.tree,
       process: tick.process

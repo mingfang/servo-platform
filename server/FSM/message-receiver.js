@@ -6,7 +6,7 @@ var dblogger = require("../utils/dblogger.js");
 var _ = require('underscore');
 var fs = require('fs');
 var utils = require("../utils/utils");
-var ticker = require('FSM/ticker').getInst();
+var ticker = require('./ticker').getInst();
 
 var FSM;
 
@@ -99,7 +99,7 @@ messageReceiver.actOnProcess = function (messageObj, process) {
       dblogger.info(strLog);
       return resolve(process.id);
     }
-    // only now we have a full object 
+    // only now we have a full object
     var processLocal = process;
     // add the message to the process
     processModel.addMessage(process.id, processLocal, messageObj);

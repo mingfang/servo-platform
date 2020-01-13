@@ -8,11 +8,8 @@ var cors = require('cors');
 var https = require('https');
 var fs = require('fs');
 
-// config 
+// config
 var config = require("./config");
-
-// add this path to requires
-require('app-module-path').addPath(__dirname);
 
 var FSMManager = require('./FSM/fsm-manager');
 
@@ -50,13 +47,13 @@ app.use(baseUrl + '/apiprocess', apiprocess);
 
 module.exports = app;
 
-// TODO: move after startAll 
+// TODO: move after startAll
 var httpServoServer = app.listen((config.port || 3000), function () {
   console.log('server app listening on port ' + (config.port || 3000));
 });
 app.httpServoServer = httpServoServer;
 
-var dblogger = require('utils/dblogger');
+var dblogger = require('./utils/dblogger');
 FSMManager.startAll(app).then((count) => {
   dblogger.log('started all processes for ' + count + ' fsms');
 
@@ -79,14 +76,14 @@ if (config.openSSL) {
       secured.listen(443);
     console.log('server listens on 443');
     // now that we have an httpServer we can start the debug
-    require('routes/apidebug').start(app);
+    require('./routes/apidebug').start(app);
 
   } catch (e) {
     console.error(e);
   }
 } else {
   // now that we have an httpServer we can start the debug
-  require('routes/apidebug').start(app);
+  require('./routes/apidebug').start(app);
 
 }
 app.use(baseUrl, function (req, res, next) {
@@ -101,7 +98,7 @@ app.use(baseUrl + "/cognility", function (req, res) {
   req.baseUrl = "/web-chat/index.html"
   req.originalUrl = "/web-chat/index.html";
   console.log('req.url', req.url);
-  // app.handle(req, res); 
+  // app.handle(req, res);
   return res.sendFile(path.resolve("public/web-chat/index.html"));
 });
 app.use(baseUrl, express.static(path.join(__dirname, 'public')));

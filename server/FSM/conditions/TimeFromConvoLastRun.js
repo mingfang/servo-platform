@@ -1,18 +1,18 @@
-var b3 = require('FSM/core/b3');
-var Condition = require('FSM/core/condition');
-var utils = require('utils/utils');
+var b3 = require('../core/b3');
+var Condition = require('../core/condition');
+var utils = require('../../utils/utils');
 var _ = require('underscore');
-var Tick = require('FSM/core/tick');
-var statsManager = require('FSM/statsManager')
+var Tick = require('../core/tick');
+var statsManager = require('../statsManager')
 
 /**
- * This checks the time from the last run of the 
+ * This checks the time from the last run of the
  *  convo with id
  * If TimeFromConvoLastRun parameter convoId is empty, it will calculate time from most recent convo
  */
 class TimeFromConvoLastRun extends Condition {
   /**
-   * @param {object} settings 
+   * @param {object} settings
    */
   constructor(settings) {
 
@@ -40,7 +40,7 @@ class TimeFromConvoLastRun extends Condition {
 
   /**
    * find the last ticked convo
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   findLastConvo(tick, parent) {
     var contexts = parent.getContexts(tick);
@@ -76,11 +76,11 @@ class TimeFromConvoLastRun extends Condition {
       grandParentId = parent.parentId;
     }
 
-    // if parent is a (first) scoreSelector 
+    // if parent is a (first) scoreSelector
     // and this node is a descendent of a scorer,
     // or the parent is the root
     if (parent.name.indexOf('ScoreSelector') > -1 || !grandParentId) {
-      // found! 
+      // found!
       var convoObj;
       if (!utils.isEmpty(this.properties.convoId)) {
         convoObj = statsManager.convoStatById(tick, this.properties.convoId, parent);
@@ -110,7 +110,7 @@ class TimeFromConvoLastRun extends Condition {
 
   /**
    * adds the score after evaluating it
-   * @param {object} tick 
+   * @param {object} tick
    */
   tick(tick) {
 
@@ -121,7 +121,7 @@ class TimeFromConvoLastRun extends Condition {
 
     // now search up the tree, for the rgiht convo
     var ctxObj = this.findTheConvo(this, tick);
-    // now see if its passed 
+    // now see if its passed
     var lastTime = ctxObj.context.lastTimeForConvo({
         tree: ctxObj.tree,
         process: tick.process

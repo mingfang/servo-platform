@@ -1,6 +1,6 @@
-var NLUModel = require('FSM/core/NLUModel');
+var NLUModel = require('../core/NLUModel');
 var _ = require('underscore');
-var dblogger = require('utils/dblogger');
+var dblogger = require('../../utils/dblogger');
 
 // class MyRegExp extends RegExp {
 //     [Symbol.matchAll](str) {
@@ -32,14 +32,14 @@ class DictModel extends NLUModel {
          *
          * @property parameters
          * @type {Object}
-         * @property {Object} parameters.nlu -this gets added onto the process properties to get used for NLU. 
+         * @property {Object} parameters.nlu -this gets added onto the process properties to get used for NLU.
          * Use language code as a key: {
-         * 
+         *
          * 'en': {
          *    engine: 'wit',
-         * 
+         *
          *     accessToken: '<your token>'
-         * 
+         *
          * }}
          **/
         this.parameters = _.extend(this.parameters, {

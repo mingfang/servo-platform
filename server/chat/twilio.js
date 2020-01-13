@@ -4,7 +4,7 @@ var clientFunc = require('twilio'); // the node_modules/twilio
 var _ = require('underscore');
 var dblogger = require('../utils/dblogger');
 var MessageModel = require("../models/message-model");
-var config = require('config');
+var config = require('../config');
 var _clients = {};
 var processModel = require('../models/processmodel');
 
@@ -13,7 +13,7 @@ var processModel = require('../models/processmodel');
 let _inst = null;
 /**
  * twilio channel
- * 
+ *
  */
 class TwilioDriver extends ChatDriverInterface {
 
@@ -42,8 +42,8 @@ class TwilioDriver extends ChatDriverInterface {
 
     /**
      * return a message object
-     * @param {*} data 
-     * @param {*} fsmId 
+     * @param {*} data
+     * @param {*} fsmId
      */
     createMessageObject(data, fsmId) {
 
@@ -81,9 +81,9 @@ class TwilioDriver extends ChatDriverInterface {
     }
     /**
      * process the request
-     * @param {*} req 
-     * @param {*} res 
-     * @param {*} fsm 
+     * @param {*} req
+     * @param {*} res
+     * @param {*} fsm
      */
     processRequest(req, res, fsm) {
         try {
@@ -113,9 +113,9 @@ class TwilioDriver extends ChatDriverInterface {
 
 
     /**
-     * send 1 message or send 
-     * @param {*} msg 
-     * @param {*} process 
+     * send 1 message or send
+     * @param {*} msg
+     * @param {*} process
      */
     send1Message(msg, process) {
 
@@ -139,12 +139,12 @@ class TwilioDriver extends ChatDriverInterface {
 
 
     /**
-     * 
-     * @param {*} response 
-     * @param {string} toId 
+     *
+     * @param {*} response
+     * @param {string} toId
      * @param {*} tree
-     * @param {*} node 
-     * @param {*} process 
+     * @param {*} node
+     * @param {*} process
      * @return {Promise}
      */
     sendMessage(response, toId, tree, node, process) {

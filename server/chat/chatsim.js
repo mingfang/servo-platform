@@ -10,7 +10,7 @@ var WebSocketDriver = require("./websocket-driver");
 var PipeManager = require("../pipes/pipemanager");
 var MessageModel = require("../models/message-model");
 var apiDebug;
-var fsmModel = require('models/fsmmodel');
+var fsmModel = require('../models/fsmmodel');
 var _mid = 0;
 let _inst = null;
 class ChatsimDriver extends WebSocketDriver {
@@ -28,10 +28,10 @@ class ChatsimDriver extends WebSocketDriver {
   }
   /**
    * send the message
-   * @param {*} response 
-   * @param {*} toID 
+   * @param {*} response
+   * @param {*} toID
    * @param {*} tree
-   * @param {*} node 
+   * @param {*} node
    */
   sendMessage(response, toID, tree, node, process) {
     let creatorUserId = process.userId;
@@ -50,7 +50,7 @@ class ChatsimDriver extends WebSocketDriver {
         text, tree.id, response, creatorUserId);
 
       this.getProcessByID(messageObj, toID).then((processObj) => {
-        apiDebug = require('routes/apidebug');
+        apiDebug = require('../routes/apidebug');
         messageObj.protocol = 'chatsim';
         apiDebug.send(processObj.id, JSON.stringify(messageObj));
       });

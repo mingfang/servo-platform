@@ -6,9 +6,9 @@ var config = require("../config");
 var ChatDriverInterface = require("./chat-driver-interface");
 var PipeManager = require("../pipes/pipemanager");
 var MessageModel = require("../models/message-model");
-var b3 = require('FSM/core/b3');
+var b3 = require('../FSM/core/b3');
 var apiDebug;
-var fsmModel = require('models/fsmmodel');
+var fsmModel = require('../models/fsmmodel');
 let _id = 0;
 let _inst = null;
 class WebSocketDriver extends ChatDriverInterface {
@@ -24,10 +24,10 @@ class WebSocketDriver extends ChatDriverInterface {
 
   /**
    * send the message
-   * @param {*} response 
-   * @param {*} toID 
+   * @param {*} response
+   * @param {*} toID
    * @param {*} tree
-   * @param {*} node 
+   * @param {*} node
    */
   sendMessage(response, toID, tree, node, process) {
     let creatorUserId = process.userId;
@@ -53,7 +53,7 @@ class WebSocketDriver extends ChatDriverInterface {
 
       messageObj.raw.command = node.name === 'SetUIAction' ? 'ui' : 'speak';
       this.getProcessByID(messageObj, toID, undefined).then((processObj) => {
-        apiDebug = require('routes/apidebug');
+        apiDebug = require('../routes/apidebug');
         apiDebug.send(processObj.id, JSON.stringify(messageObj));
       });
       resolve({
@@ -65,16 +65,16 @@ class WebSocketDriver extends ChatDriverInterface {
 
   /**
    * start apidebug which stands as a socket listener
-   * @param {*} app 
-   * @param {*} trees 
+   * @param {*} app
+   * @param {*} trees
    */
   startAll() {
-    apiDebug = require('routes/apidebug');
+    apiDebug = require('../routes/apidebug');
   }
 
   /**
    * when message received
-   * @param {*} message 
+   * @param {*} message
    */
   onMessage(message) {
     dblogger.flow('websocket message arrived', JSON.stringify(message));
@@ -84,7 +84,7 @@ class WebSocketDriver extends ChatDriverInterface {
     }).then((pid) => {
       dblogger.flow('---------process request processed--------', pid, message.data);
     }).catch((error) => {
-      apiDebug = require('routes/apidebug');
+      apiDebug = require('../routes/apidebug');
       _.extend(message.data, {
         text: error.toString() + error.message // not sure of the exception format
       });
@@ -98,17 +98,17 @@ class WebSocketDriver extends ChatDriverInterface {
 
   /**
    * stop apidebug
-   * @param {*} app 
+   * @param {*} app
    */
   stopAll(app) {
-    apiDebug = require('routes/apidebug');
+    apiDebug = require('../routes/apidebug');
     apiDebug.stop(app);
   }
 
   /**
-   * main processing 
-   * @param {*} req 
-   * @param {*} res 
+   * main processing
+   * @param {*} req
+   * @param {*} res
    */
   processRequest(req, res) {
     return new Promise((resolve, reject1) => {
@@ -233,10 +233,10 @@ class WebSocketDriver extends ChatDriverInterface {
     return retMsg;
   }
   /**
-   * 
-   * @param {*} messageObj 
-   * @param {*} pid 
-   * @param {*} res 
+   *
+   * @param {*} messageObj
+   * @param {*} pid
+   * @param {*} res
    */
   getProcessByID(messageObj, pid, res) {
 
@@ -295,7 +295,7 @@ class WebSocketDriver extends ChatDriverInterface {
 
   /**
    * for now
-   * @param {*} messageObj 
+   * @param {*} messageObj
    */
   getProccessID(messageObj) {
     //console.log('getProccessID')
@@ -305,8 +305,8 @@ class WebSocketDriver extends ChatDriverInterface {
 
   /**
    * hit the process object with the message
-   * @param {*} messageObj 
-   * @param {*} processObj 
+   * @param {*} messageObj
+   * @param {*} processObj
    */
   actOnProcess(messageObj, processObj) {
 

@@ -5,7 +5,7 @@ var NLUPipeInterface = require("../nlu-pipe-interface.js");
 const {
   Wit
 } = require('./node-wit');
-var dblogger = require('utils/dblogger');
+var dblogger = require('../../utils/dblogger');
 
 class WIT extends NLUPipeInterface {
   constructor(options) {
@@ -25,7 +25,7 @@ class WIT extends NLUPipeInterface {
   }
 
   /**
-   * 
+   *
    * @param   {{   text:,
                   entities: [
                   {
@@ -33,7 +33,7 @@ class WIT extends NLUPipeInterface {
                       value,
                   },
                   ],
-              }) sample 
+              }) sample
    */
   train(sample) {
     return new Promise((resolve, reject) => {
@@ -48,15 +48,15 @@ class WIT extends NLUPipeInterface {
         score: response.entities.intent[0].confidence
       };
     } else {
-      // on wit, we could get an entity without an intent. 
+      // on wit, we could get an entity without an intent.
       return Object.keys(response.entities).length ? undefined : this.noIntent();
     }
   }
 
   /**
-   * 
-   * @param {*} response 
-   * @param {string} keyPrefix 
+   *
+   * @param {*} response
+   * @param {string} keyPrefix
    */
   extractEntities(response, keyPrefix, entities) {
     for (var key in response.entities) {
@@ -84,7 +84,7 @@ class WIT extends NLUPipeInterface {
             //     "value": value,
             //     "confidence": entity[i]["confindence"]
             //   }, keyPrefix + key + "#", entities);
-            // } else 
+            // } else
             {
               values.push(value);
               avgscore += entity[i].confidence / (i + 1);

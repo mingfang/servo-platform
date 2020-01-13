@@ -1,6 +1,6 @@
 var PipeInterface = require("./pipe-interface");
 var _ = require('underscore');
-var dblogger = require('utils/dblogger');
+var dblogger = require('../utils/dblogger');
 /***
  * @typedef IntentEntitiesObject
  * @property {Array} entities - an object with the message entities from NLU
@@ -9,12 +9,12 @@ var dblogger = require('utils/dblogger');
  */
 /**
  *  NLUPipeInterface is the base object for any NLU API
- * 
+ *
  */
 class NLUPipeInterface extends PipeInterface {
   /**
    * resolves a {IntentEntitiesObject}
-   * @param {*} text 
+   * @param {*} text
    * @return {Promise}
    */
   process(text) {
@@ -51,7 +51,7 @@ class NLUPipeInterface extends PipeInterface {
                       value,
                   },
                   ],
-              }) sample 
+              }) sample
    */
   train(sample) {
     throw "stub!";
@@ -59,7 +59,7 @@ class NLUPipeInterface extends PipeInterface {
   }
   /**
    * overridable
-   * @param {*} text 
+   * @param {*} text
    * @return {*}
    */
   run(text) {
@@ -67,7 +67,7 @@ class NLUPipeInterface extends PipeInterface {
   }
   /**
    * overridable
-   * @param {*} response 
+   * @param {*} response
    * @return {*}
    */
   extractIntent(response) {
@@ -76,9 +76,9 @@ class NLUPipeInterface extends PipeInterface {
 
   /**
    * overridable
-   * @param {*} response 
+   * @param {*} response
    * @param {string} key pref
-   * @param {*} entities object 
+   * @param {*} entities object
    * @return {any}
    */
   extractEntities(response, keyPref, entities) {

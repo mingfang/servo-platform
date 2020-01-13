@@ -1,4 +1,4 @@
-var Action = require('FSM/core/action');
+var Action = require('../core/action');
 var _ = require('underscore');
 /**
  * Sends a UI event and continue. UI event lies on a data binding infrastructure on the UI client. Returns RUNNING until send acknowledged, SUCCESS afterwards
@@ -34,7 +34,7 @@ class SetUIAction extends Action {
 
   /**
    * set a wake up flag based on the entry target, for session-based clients
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   open(tick) {
     if (tick.target && tick.target.isFlowControl()) {
@@ -43,7 +43,7 @@ class SetUIAction extends Action {
   }
   /**
    * reset a wake up flag , for session-based clients
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   close(tick) {
     if (tick.target && tick.target.isWakeUp()) {

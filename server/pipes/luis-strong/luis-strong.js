@@ -3,7 +3,7 @@ var Promise = require("bluebird");
 var request = require('request');
 var querystring = require('querystring');
 var NLUPipeInterface = require("../nlu-pipe-interface.js");
-var dblogger = require("utils/dblogger");
+var dblogger = require("../../utils/dblogger");
 
 const API_URL = "https://api.projectoxford.ai/luis/v1/application";
 class LUIS extends NLUPipeInterface {

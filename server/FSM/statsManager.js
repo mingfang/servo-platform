@@ -1,6 +1,6 @@
-var b3 = require('FSM/core/b3');
-var utils = require('utils/utils');
-var dblogger = require('utils/dblogger');
+var b3 = require('./core/b3');
+var utils = require('../utils/utils');
+var dblogger = require('../utils/dblogger');
 
 const MAX_EVENTS = 99;
 
@@ -8,7 +8,7 @@ class StatsManager {
 
   /**
    * convoEvents is an object with an entry per scoreSelector, which is an object with  an entry per convo id
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @param {BaseNode} node
    */
   nodeConvoEvents(tick, node) {
@@ -20,8 +20,8 @@ class StatsManager {
 
   /**
    * save openTime
-   * @param {Tick} tick 
-   * @param {BaseNode} ctxManagerNode 
+   * @param {Tick} tick
+   * @param {BaseNode} ctxManagerNode
    */
   openContext(tick, ctxManagerNode) {
     // fill in a convoStats if never did
@@ -70,8 +70,8 @@ class StatsManager {
 
   /**
    * closes context
-   * @param {Tick} tick 
-   * @param {BaseNode} ctxManagerNode 
+   * @param {Tick} tick
+   * @param {BaseNode} ctxManagerNode
    */
   closeContext(tick, ctxManagerNode) {
 
@@ -130,9 +130,9 @@ class StatsManager {
     };
   }
   /**
-   * 
-   * @param {Tick} tick 
-   * @param {*} convoIndex 
+   *
+   * @param {Tick} tick
+   * @param {*} convoIndex
    */
   convoStat(tick, convoIndex, node) {
     var convos = this.getConvoStats(tick, node);
@@ -148,8 +148,8 @@ class StatsManager {
 
   /**
    * return the last time a convo with index was ticked
-   * @param {Tick} tick 
-   * @param {*} index 
+   * @param {Tick} tick
+   * @param {*} index
    */
   lastTimeForConvo(tick, index, node) {
     var convo = this.convoStat(tick, index, node);
@@ -161,7 +161,7 @@ class StatsManager {
    */
   addConversationStart(tick, convoIndex, node) {
     try {
-      // save this event 
+      // save this event
       var prevCount = (node.global(tick, 'lastConversationStart') &&
         node.global(tick, 'lastConversationStart').count) || 0;
       var thisEntry = {

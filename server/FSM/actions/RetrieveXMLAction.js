@@ -1,8 +1,8 @@
-var b3 = require('FSM/core/b3');
-var Action = require('FSM/core/action');
+var b3 = require('../core/b3');
+var Action = require('../core/action');
 var _ = require('underscore');
 var ParseXML = require('xml2js').parseString;
-var dblogger = require('utils/dblogger');
+var dblogger = require('../../utils/dblogger');
 /**
  * Retrieves an XML file from an external URL, parsed it, and sets fieldName to the parsed object
  */
@@ -76,8 +76,8 @@ class RetrieveXMLAction extends Action {
     return status;
   }
   /**
-   * 
-   * @param {Array} arr 
+   *
+   * @param {Array} arr
    */
   flattenArray(arr) {
     if (_.isArray(arr) && arr.length == 1) {
@@ -95,8 +95,8 @@ class RetrieveXMLAction extends Action {
   }
 
   /**
-   * 
-   * @param {Tick} tick 
+   *
+   * @param {Tick} tick
    * @private
    */
   tick(tick) {

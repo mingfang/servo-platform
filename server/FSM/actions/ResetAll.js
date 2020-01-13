@@ -1,16 +1,16 @@
-var b3 = require('FSM/core/b3');
+var b3 = require('../core/b3');
 var _ = require('underscore');
-var Action = require('FSM/core/action');
-var utils = require('utils/utils');
-var dblogger = require('utils/dblogger');
+var Action = require('../core/action');
+var utils = require('../../utils/utils');
+var dblogger = require('../../utils/dblogger');
 /**
- * ResetAll removes last target, ends session (for session-based clients) closes all nodes, and empties the global memory, too 
+ * ResetAll removes last target, ends session (for session-based clients) closes all nodes, and empties the global memory, too
  *  @memberof module:Actions
  */
 class ResetAll extends Action {
 
   /**
-   * 
+   *
    * @private
    */
   constructor() {
@@ -25,7 +25,7 @@ class ResetAll extends Action {
      * @property {boolean} parameters.dontRemoveTarget- if false, removes target
      * @property {boolean} parameters.dontEndSession - if false, ends the session
      * @property {boolean} parameters.emptyGlobalMemory - if false, ends the session
-     * 
+     *
      **/
     this.parameters = _.extend(this.parameters, {
       dontEndSession: false,
@@ -37,7 +37,7 @@ class ResetAll extends Action {
   /**
    * Tick method.
    *
-   * @private 
+   * @private
    * @param {Tick} tick A tick instance.
    * @return {TickStatus} A state constant.
    **/
@@ -45,7 +45,7 @@ class ResetAll extends Action {
     try {
 
       /**
-       * for alexa 
+       * for alexa
        */
       if (!this.properties.dontEndSession && tick.process.session) {
         tick.process.session.shouldEndSession = true;

@@ -1,7 +1,7 @@
-var b3 = require('FSM/core/b3');
-var Condition = require('FSM/core/condition');
-var utils = require('utils/utils');
-var dblogger = require('utils/dblogger');
+var b3 = require('../core/b3');
+var Condition = require('../core/condition');
+var utils = require('../../utils/utils');
+var dblogger = require('../../utils/dblogger');
 
 /**
  * Returns success if SERVER timezone is equal to the timeOfDay from properties, failure otherwise

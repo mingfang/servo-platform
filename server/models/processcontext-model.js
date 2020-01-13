@@ -6,7 +6,7 @@ var _ = require('underscore');
 var baseModel = require("./base-model")
 var uuid = require("uuid");
 var DAL = require("../dal/router");
-var cacheFactory = require('models/cache-factory');
+var cacheFactory = require('./cache-factory');
 
 
 // use a cache with 10 min expiration so we dont have to read from the disk

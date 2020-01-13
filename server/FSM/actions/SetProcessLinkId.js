@@ -1,10 +1,10 @@
-var b3 = require('FSM/core/b3');
+var b3 = require('../core/b3');
 var _ = require('underscore');
-var Action = require('FSM/core/action');
-var utils = require('utils/utils');
-var dblogger = require('utils/dblogger');
+var Action = require('../core/action');
+var utils = require('../../utils/utils');
+var dblogger = require('../../utils/dblogger');
 var RestPost = require('../../chat/rest-post');
-var fsmModel = require('models/fsmmodel');
+var fsmModel = require('../../models/fsmmodel');
 
 /**
  * Set/unset a link id between processes. data then can be retrieved in other channels/processes using the Link id'
@@ -23,7 +23,7 @@ class SetProcessLinkId extends Action {
          * @type {Object}
          * @property {MemoryField} parameters.processLinkId a string that the incoming post must bring in order to link the process
          * @property {boolean} parameters.remove set to true to remove this channel
-         * 
+         *
          **/
         this.parameters = _.extend(this.parameters, {
             'processLinkId': '',
@@ -38,7 +38,7 @@ class SetProcessLinkId extends Action {
     /**
      * Tick method.
      *
-     * @private 
+     * @private
      * @param {Tick} tick A tick instance.
      * @return {TickStatus} A status constant.
      **/

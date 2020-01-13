@@ -1,29 +1,29 @@
 /**
  * b3
- * 
- * Copyright (c) 2017-2019 Servo Labs Inc.  
- * Copyright(c)  Renato de Pontes Pereira.  
+ *
+ * Copyright (c) 2017-2019 Servo Labs Inc.
+ * Copyright(c)  Renato de Pontes Pereira.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to 
- * deal in the Software without restriction, including without limitation the 
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
  * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is 
+ * sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  **/
 var uuid = require('uuid');
-var dblogger = require('utils/dblogger');
+var dblogger = require('../../utils/dblogger');
 
 
 /**
@@ -31,14 +31,14 @@ var dblogger = require('utils/dblogger');
  * @private
  */
 
-/* Servo run-time is a Behavior Tree system written in JavaScript. It provides structures and algorithms that assist you in the task of creating intelligent agents for your AI application. Check it out some features 
+/* Servo run-time is a Behavior Tree system written in JavaScript. It provides structures and algorithms that assist you in the task of creating intelligent agents for your AI application. Check it out some features
  * of Servo:
- * 
- * - Based on the work of (Marzinotto et al., 2014), in which they propose a 
+ *
+ * - Based on the work of (Marzinotto et al., 2014), in which they propose a
  *   **formal**, **consistent** and **general** definition of Behavior Trees;
- * - **Optimized to control multiple agents**: you can use a single behavior 
+ * - **Optimized to control multiple agents**: you can use a single behavior
  *   tree instance to handle hundreds of agents;
- * - It was **designed to load and save trees in a JSON format**, in order to 
+ * - It was **designed to load and save trees in a JSON format**, in order to
  *   use, edit and test it in multiple environments, tools and languages;
  * @private
  **/
@@ -47,7 +47,7 @@ var b3 = function () {};
 
 /**
  * Version of the library.
- * 
+ *
  * @property VERSION
  * @type {string}
  */
@@ -57,17 +57,17 @@ b3.VERSION = '0.9.0';
 /**
  * 1 returned when a criterion has been met by a condition node or an action node
  * has been completed successfully.
- * @private 
+ * @private
  * @return {TickStatus}*/
 b3.SUCCESS = function () {
   return 1;
 };
 
 /**
- * 2 returned when a criterion has not been met by a condition node or an action 
+ * 2 returned when a criterion has not been met by a condition node or an action
  * node could not finish its execution for any reason.
- * 
- * @private 
+ *
+ * @private
  * @return {TickStatus}
  * */
 b3.FAILURE = function () {
@@ -75,10 +75,10 @@ b3.FAILURE = function () {
 };
 
 /**
- * 3 returned when an action node has been initialized but is still waiting the 
+ * 3 returned when an action node has been initialized but is still waiting the
  * its resolution.
- * 
- * @private 
+ *
+ * @private
  * @return {TickStatus}
  * */
 b3.RUNNING = function () {
@@ -86,11 +86,11 @@ b3.RUNNING = function () {
 };
 
 /**
- * 4 Returned when some unexpected error happened in the tree, probably by a 
- * programming error (trying to verify an undefined variable). Its use depends 
+ * 4 Returned when some unexpected error happened in the tree, probably by a
+ * programming error (trying to verify an undefined variable). Its use depends
  * on the final implementation of the leaf nodes.
- * 
- * @private 
+ *
+ * @private
  * @return {TickStatus}
  * */
 b3.ERROR = function () {
@@ -99,28 +99,28 @@ b3.ERROR = function () {
 
 /**
  * handshake command
- * 
+ *
  * @property HANDSHAKE
  * @type {string}
  */
 b3.HANDSHAKE = 'handshake';
 /**
  * event string for None
- * 
+ *
  * @property NONE
  * @type {string}
  */
 b3.NONE = 'None';
 /**
  * event string for wakeup
- * 
+ *
  * @property WAKEUP
  * @type {string}
  */
 b3.WAKEUP = 'WakeupIntent';
 /**
  * Describes the node category as Composite.
- * 
+ *
  * @property COMPOSITE
  * @type {string}
  */
@@ -128,7 +128,7 @@ b3.COMPOSITE = 'composite';
 
 /**
  * Describes the node category as Decorator.
- * 
+ *
  * @property DECORATOR
  * @type {string}
  */
@@ -136,7 +136,7 @@ b3.DECORATOR = 'decorator';
 
 /**
  * Describes the node category as Action.
- * 
+ *
  * @property ACTION
  * @type {string}
  */
@@ -144,7 +144,7 @@ b3.ACTION = 'action';
 
 /**
  * Describes the node category as Condition.
- * 
+ *
  * @property CONDITION
  * @type {string}
  */
@@ -156,7 +156,7 @@ b3.NLUMODEL = 'nlumodel';
 
 /**
  * List of internal and helper functions in Behavior3JS.
- * 
+ *
  * @class b3
  * @private
  **/
@@ -164,10 +164,10 @@ b3.NLUMODEL = 'nlumodel';
 
 /**
  * This function is used to create unique IDs for trees and nodes.
- * 
+ *
  * (consult http://www.ietf.org/rfc/rfc4122.txt).
  *
- * @private 
+ * @private
  * @return {string} A unique ID.
  **/
 b3.createUUID = function () {
@@ -192,7 +192,7 @@ b3.load = function (folderName = "FSM") {
                 return;
               }
               console.log(file);
-              var cls = require(folderName + '/' + folder + '/' + file);
+              var cls = require('../../' + folderName + '/' + folder + '/' + file);
               var className = path.basename(file, '.js');
               b3[className] = cls;
             });

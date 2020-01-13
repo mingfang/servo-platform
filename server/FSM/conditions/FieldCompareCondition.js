@@ -1,14 +1,14 @@
-var Condition = require('FSM/core/condition');
+var Condition = require('../core/condition');
 var _ = require('underscore');
-var utils = require('utils/utils');
-var dblogger = require('utils/dblogger');
+var utils = require('../../utils/utils');
+var dblogger = require('../../utils/dblogger');
 
 /**
  * @typedef Operator - any binary logical operator like ===, <, <==, !==, ==>
  */
 /**
  * Compare fields across global,context, volatile and message memories. left and right operands should have a dot notation with the object name. Eg: message.text, context.amount etc.
- * Operator could be any logical operator like ===, <, <==, !==, ==> etc. 
+ * Operator could be any logical operator like ===, <, <==, !==, ==> etc.
  * @memberof module:Conditions
  */
 class FieldCompareCondition extends Condition {
@@ -24,8 +24,8 @@ class FieldCompareCondition extends Condition {
      * @type {Object}
      * @property {ExpressionString|MemoryField} parameters.left
      * @property {Operator} parameters.operator - logical operator
-     * @property {ExpressionString|MemoryField} parameters.right 
-     *  
+     * @property {ExpressionString|MemoryField} parameters.right
+     *
      **/
     this.parameters = _.extend(this.parameters, {
       'left': '',

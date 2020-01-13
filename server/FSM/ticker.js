@@ -1,12 +1,12 @@
-var cacheFactory = require('models/cache-factory');
+var cacheFactory = require('../models/cache-factory');
 var _ = require('underscore');
-var dblogger = require('utils/dblogger');
+var dblogger = require('../utils/dblogger');
 
 const MAX_CYCLE = 1200000;
 const MIN_CYCLE = 200;
 const DECELERATION = 1.10;
 
-// singleton 
+// singleton
 var _tickerInst;
 
 
@@ -31,8 +31,8 @@ class Ticker {
   }
   /**
    * sets a cycle to this process id
-   * @param {string} pid 
-   * @param {number} val 
+   * @param {string} pid
+   * @param {number} val
    */
   start(pid, val = MIN_CYCLE) {
     this.cycle(pid, val);
@@ -42,7 +42,7 @@ class Ticker {
 
   /**
    * stops a pid cycle now
-   * @param {string} pid 
+   * @param {string} pid
    */
   stop(pid) {
     this.cycleCache.del(pid);
@@ -55,7 +55,7 @@ class Ticker {
 
   /**
    * is this process ticking
-   * @param {*} pid 
+   * @param {*} pid
    */
   isTicking(pid) {
     return !!this.timeoutCache.get(pid);
@@ -63,8 +63,8 @@ class Ticker {
 
   /**
    * gets/sets a cycle length
-   * @param {string} pid 
-   * @param {number=} val 
+   * @param {string} pid
+   * @param {number=} val
    */
   cycle(pid, val) {
     if (val) {
@@ -76,7 +76,7 @@ class Ticker {
 
   /**
    * change a cycle length
-   * @param {string} pid 
+   * @param {string} pid
    */
   adjust(pid) {
 
@@ -101,8 +101,8 @@ class Ticker {
 
   /**
    * starts a timeout for a callback function
-   * @param {string} pid 
-   * @param {Function} cb 
+   * @param {string} pid
+   * @param {Function} cb
    */
   timeout(pid, cb, breakIn = false) {
     // get the next cycle
@@ -124,7 +124,7 @@ class Ticker {
 
   /**
    * executes the timeout for pid now
-   * @param {string} pid 
+   * @param {string} pid
    */
   breakIn(pid) {
     var timeout = this.timeoutCache.get(pid);

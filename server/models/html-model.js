@@ -4,7 +4,7 @@ var dblogger = require("../utils/dblogger.js");
 var fs = require('fs');
 var utils = require('../utils/utils')
 var _ = require('underscore')
-var cacheFactory = require('models/cache-factory');
+var cacheFactory = require('./cache-factory');
 
 
 // use a cache with 10 min expiration so we dont have to read from the disk

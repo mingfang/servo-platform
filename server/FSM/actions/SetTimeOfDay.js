@@ -1,12 +1,12 @@
-var b3 = require('FSM/core/b3');
+var b3 = require('../core/b3');
 var _ = require('underscore');
-var Action = require('FSM/core/action');
-var utils = require('utils/utils');
+var Action = require('../core/action');
+var utils = require('../../utils/utils');
 
 /**
- * 
+ *
  * sets context.timeOfDay field with an approximate time in the day - eg morning, afternoon etc
- * also, sets two global fields - datetimeString and speakTimeOfDay - with an english structure 
+ * also, sets two global fields - datetimeString and speakTimeOfDay - with an english structure
  * Language: en
  *  @memberof module:Actions
  * @private

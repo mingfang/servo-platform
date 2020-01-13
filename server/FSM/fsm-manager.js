@@ -5,7 +5,7 @@
 var processModel = require("../models/processmodel.js");
 var fsmModel = require("../models/fsmmodel.js");
 var chatManager = require("../chat/chatmanager");
-var dblogger = require("utils/dblogger.js");
+var dblogger = require("../utils/dblogger.js");
 var _ = require('underscore');
 var messageReceiver = require('./message-receiver.js');
 var BehaviorTree = require('./core/behaviorTree');
@@ -13,8 +13,8 @@ var b3 = require('./core/b3');
 var Target = require('./core/target');
 var uuid = require("uuid");
 var config = require('../config.json');
-var cacheFactory = require('models/cache-factory');
-var Ticker = require('FSM/ticker');
+var cacheFactory = require('../models/cache-factory');
+var Ticker = require('./ticker');
 
 var _pausedProcesses = {};
 // TODO: rethink stdTTL. if we enable it, need to make sure process is reloaded otherwise getFromCache fails
@@ -46,9 +46,9 @@ class FSMManager {
   constructor() {
     /**
      * Ticker for managing tick frequency
-     * 
+     *
      * @property ticker
-     * @type {Ticker} 
+     * @type {Ticker}
      */
     this.ticker = null;
   }
@@ -101,7 +101,7 @@ class FSMManager {
               for (let i = 0; i < loadRoots.length; i++) {
                 let loadPromise = loadRoots[i];
                 let processX = processes[i];
-                // local function to wait on each process 
+                // local function to wait on each process
                 ((p, loadPromise1) => {
                   loadPromise1.catch((error) => {
                     dblogger.error('error in loading a tree  ', error);
@@ -188,8 +188,8 @@ class FSMManager {
 
   /**
    * purge the bt cache, and the non global memory of all processes that are currently on this cache
-   * @param {string} userId 
-   * @param {string} fsmId 
+   * @param {string} userId
+   * @param {string} fsmId
    */
   static resetBehaviorTrees(userId, fsmId) {
     var app = require('../app');
@@ -197,7 +197,7 @@ class FSMManager {
 
 
     // flush all the views
-    let viewModel = require('models/view-model');
+    let viewModel = require('../models/view-model');
     viewModel.flushAll();
 
     // reload user's fsms
@@ -208,7 +208,7 @@ class FSMManager {
         _.each(processes, (process1) => {
           // stop the tick
           FSMManager.tickStop(process1.id, userId);
-          // reset the non globals 
+          // reset the non globals
           process1.resetNonGlobalMemory();
         });
 
@@ -262,12 +262,12 @@ class FSMManager {
 
 
   /**
-   *   
+   *
    * load from files, with subtrees
-   * @param {Object} fsm 
-   * @param {*} treeNodeId 
-   * @param {string} tree_id 
-   * @param {Boolean} noDefaultRootEntities  if true, dont create default root enitites 
+   * @param {Object} fsm
+   * @param {*} treeNodeId
+   * @param {string} tree_id
+   * @param {Boolean} noDefaultRootEntities  if true, dont create default root enitites
    */
   static loadBehaviorTree(fsm, treeNodeId, tree_id, noDefaultRootEntities) {
     // load the tree
@@ -355,9 +355,9 @@ class FSMManager {
 
   /**
    * to stop a certain process tick, we add a stop command to the queue
-   * 
-   * @param {string} pid 
-   * @param {string} userId 
+   *
+   * @param {string} pid
+   * @param {string} userId
    */
   static tickStop(pid, userId) {
 
@@ -380,7 +380,7 @@ class FSMManager {
 
   static tickContinue(fsm_id, process) {
     // make sure tickStart will work
-    // TODO: MOVE TICKITNOW OUT. 
+    // TODO: MOVE TICKITNOW OUT.
     _pausedProcesses[process.id] = false;
     _processTargetCache.del(process.id);
     // and re-start
@@ -390,7 +390,7 @@ class FSMManager {
 
 
   /**
-   * call this function for every behaviour tree 
+   * call this function for every behaviour tree
    */
   static tickStart(fsm_id, process) {
     // in memory flag for calling tickStart only once per process
@@ -409,9 +409,9 @@ class FSMManager {
     });
 
     // 1. different tick loop for every process (TODO: and for every bt)
-    // we use TickItNow so we can refer process id by val  
+    // we use TickItNow so we can refer process id by val
     // 2. if target/intent arrive in the middle tick, it needs to wait until its treatment  is finished
-    // 3. otherwise, tick continues indefinetly until stopped, 
+    // 3. otherwise, tick continues indefinetly until stopped,
     function tickItNow(pid, fsm_id) {
 
       function tickIt(brokeIn) {
@@ -424,7 +424,7 @@ class FSMManager {
           // ADD TARGET
           // treatmet of previous target is done, we can pop next
           var qObject = FSMManager.removeFromQueue(pid);
-          // and put it on the target for the next tick 
+          // and put it on the target for the next tick
           if (qObject) {
 
             if (qObject.targetObj.stopCommand || !thisProcess) { // if this process is no longer in play, kill the loop, too
@@ -465,21 +465,21 @@ class FSMManager {
           // if we are done with our top - level tree
           if (ret && ret !== b3.RUNNING()) {
             // we can remove all targets - they will not be used and only confuse the engine
-            FSMManager.resetTargets(pid); //we remove all targets - this happens once the conversation ended (ie not running), 
+            FSMManager.resetTargets(pid); //we remove all targets - this happens once the conversation ended (ie not running),
             // so might be here a removal of many  targets that came to the conversation.
             //  but since every new AskAndMap we remove the previous target, we should have no targets here in the 'end' (end is success/failure)
             //==============================================================================================================
-            // // if there is an object saved for post-tick addition, its time to queue it properly 
+            // // if there is an object saved for post-tick addition, its time to queue it properly
             // if (queueAfterDoneRunningObj) {
             //   // make it a regular object
             //   queueAfterDoneRunningObj.targetObj.messageObj.queueAfterDoneRunning = undefined;
             //   FSMManager.addToQueue(pid, queueAfterDoneRunningObj.targetObj, true);
             // }
-            // adjust timeout for this process            
+            // adjust timeout for this process
             FSMManager.ticker.adjust(pid);
           }
 
-          // if need to requeue 
+          // if need to requeue
           // if (queueAfterDoneRunningObj && (ret === b3.RUNNING() || ret === b3.ERROR())) {
           //   FSMManager.addToQueue(pid, queueAfterDoneRunningObj.targetObj, true);
           // }
@@ -504,7 +504,7 @@ class FSMManager {
       }
 
 
-      // start the ticker with default minimum 
+      // start the ticker with default minimum
       FSMManager.ticker.start(pid);
 
       tickIt();

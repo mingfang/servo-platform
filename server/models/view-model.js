@@ -1,10 +1,10 @@
 var config = require("../config");
 var Promise = require('promise');
-var utils = require("utils/utils");
-var dblogger = require("utils/dblogger.js");
+var utils = require("../utils/utils");
+var dblogger = require("../utils/dblogger.js");
 var _ = require('underscore');
 //incomaptibel win32var jsondir = require('jsondir');
-var cacheFactory = require('models/cache-factory');
+var cacheFactory = require('./cache-factory');
 var fs = require('fs');
 
 // use a cache with 10 min expiration so we dont have to read from the disk

@@ -1,18 +1,18 @@
-var Tick = require('FSM/core/tick');
-var b3 = require('FSM/core/b3');
-var Composite = require('FSM/core/composite');
+var Tick = require('../core/tick');
+var b3 = require('../core/b3');
+var Composite = require('../core/composite');
 var _ = require('underscore');
-var dblogger = require('utils/dblogger');
-var fsmModel = require('models/fsmmodel');
-var statsManager = require('FSM/statsManager');
-var ContextManager = require('FSM/contextManager');
+var dblogger = require('../../utils/dblogger');
+var fsmModel = require('../../models/fsmmodel');
+var statsManager = require('../statsManager');
+var ContextManager = require('../contextManager');
 
 /**
- * This node runs the left child nodes (Scorers aka Controllers) , getting a score and index 
- * then uses the score to select a corresponing (by same index) on the right children (Executors aka Convos) 
+ * This node runs the left child nodes (Scorers aka Controllers) , getting a score and index
+ * then uses the score to select a corresponing (by same index) on the right children (Executors aka Convos)
  * It works in conjunction with the AddScore action. The AddScore look (up the tree) for the first ScoreSelector
- *  and update its score there. 
- * This allows nesting of ScoreSelectors - actors can addscores for higher contexts. ONLY SCORERS CAN USE sub-ScoreSelectors 
+ *  and update its score there.
+ * This allows nesting of ScoreSelectors - actors can addscores for higher contexts. ONLY SCORERS CAN USE sub-ScoreSelectors
  * - those include other Scorers, and AddScore-only (usually) Executors
  * @memberof module:Composites
  * @private
@@ -53,8 +53,8 @@ class ScoreSelector extends Composite {
 
   /**
    * is this node a scorer
-   * @param {Tick} tick 
-   * @param {*} node 
+   * @param {Tick} tick
+   * @param {*} node
    */
   isScorer(tick, node) {
     return this.scorerIndex(node.id) > -1;
@@ -71,7 +71,7 @@ class ScoreSelector extends Composite {
   /**
    * Open method.
    *
-   * @private 
+   * @private
    * @param {Tick} tick A tick instance.
    **/
   open(tick) {
@@ -86,8 +86,8 @@ class ScoreSelector extends Composite {
 
   /**
    * overridable
-   * @param {Tick} tick 
-   * @param {number} selectedConvoIndex 
+   * @param {Tick} tick
+   * @param {number} selectedConvoIndex
    */
   setContextChild(tick, selectedConvoIndex) {
     dblogger.assert(selectedConvoIndex < this.children.length, 'index too hight');
@@ -97,7 +97,7 @@ class ScoreSelector extends Composite {
 
   /**
    * reset all variables that deals with scoring
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   resetScoring(tick) {
     // map to ids so not to save circular objects
@@ -128,7 +128,7 @@ class ScoreSelector extends Composite {
   /**
    * return child index or -1
    * @param {string} id a guid
-   * 
+   *
    * @return {(number|-1)}
    */
   childIndex(id) {
@@ -142,8 +142,8 @@ class ScoreSelector extends Composite {
 
   /**
    * return the last time a convo with index was ticked
-   * @param {Tick} tick 
-   * @param {number} index 
+   * @param {Tick} tick
+   * @param {number} index
    */
   lastTimeForConvo(tick, index) {
     var convo = statsManager.convoStat(tick, index, this);
@@ -151,8 +151,8 @@ class ScoreSelector extends Composite {
   }
 
   /**
-   * return the scorer node affiliated with the index 
-   * @param {number} index - index of a convo 
+   * return the scorer node affiliated with the index
+   * @param {number} index - index of a convo
    */
   scorerFor(index) {
     var maxScorersIndex = this.children.length / 2;
@@ -178,11 +178,11 @@ class ScoreSelector extends Composite {
 
 
   /**
-   *  scorers are ticked  only 
-   * if they are interrupters 
-   * otherwise they are ticked only when there's no convo going on 
+   *  scorers are ticked  only
+   * if they are interrupters
+   * otherwise they are ticked only when there's no convo going on
    * at the moment
-   * @param {Object} tick 
+   * @param {Object} tick
    * @private
    */
   scorersLeft(tick) {
@@ -209,9 +209,9 @@ class ScoreSelector extends Composite {
 
   /**
    * Move to a new context - selectedConvoIndex
-   * @param {Tick} tick 
-   * @param {*} selectedConvoIndex 
-   * @param {*} prevSelectedConvoIndex 
+   * @param {Tick} tick
+   * @param {*} selectedConvoIndex
+   * @param {*} prevSelectedConvoIndex
    * @private
    */
   switchContext(tick, selectedConvoIndex, prevSelectedConvoIndex, score) {
@@ -256,7 +256,7 @@ class ScoreSelector extends Composite {
   /**
    * select the highest scorer if any
    * @param {Tick} tick
-   * @private 
+   * @private
    */
   _selectScorer(tick) {
     var atLeastOneGood = false,
@@ -264,13 +264,13 @@ class ScoreSelector extends Composite {
     // if we are on the scoring
     var selectedConvoIndex = tick.process.get('selectedConvoIndex', tick.tree.id, this.id);
 
-    // scorers left brings the only interrupters, if we already chose a maxscorer 
+    // scorers left brings the only interrupters, if we already chose a maxscorer
     var scorersLeft = this.scorersLeft(tick);
 
     var doneIndexes = [];
     _.each(scorersLeft, (scorer) => {
       var state_i = scorer._execute(tick);
-      // // its enough that one succeeded 
+      // // its enough that one succeeded
       // if (state_i===b3.FAILURE()) {
       //     this.set(tick,'status',state_i);
       // }\
@@ -360,9 +360,9 @@ class ScoreSelector extends Composite {
 
   /**
    * try to run a scorer
-   * @param {Tick} tick 
-   * @param {*} selectedConvoIndex 
-   * return 
+   * @param {Tick} tick
+   * @param {*} selectedConvoIndex
+   * return
    */
   _runScorer(tick, selectedConvoIndex, controllersStatus) {
     // we have a max scorer
@@ -370,7 +370,7 @@ class ScoreSelector extends Composite {
 
       var status = this.tickContextTree(tick, selectedConvoIndex);
 
-      // if we have a selection, it means scorers arent running any more 
+      // if we have a selection, it means scorers arent running any more
       dblogger.assert('selectedConvoIndex>-1 should mean that all controllers finished', controllersStatus !== b3.RUNNING());
       // runUntilAllDone - so here we cannot send success/fail until all controllers AND convos
       return this.properties.runUntilAllDone ? b3.RUNNING() : status;
@@ -382,9 +382,9 @@ class ScoreSelector extends Composite {
   }
 
   /**
-   * 
+   *
    * @param {Tick} tick
-   * @private 
+   * @private
    */
   tick(tick) {
     return this._scoreSelectorTick(tick);
@@ -392,8 +392,8 @@ class ScoreSelector extends Composite {
 
   /**
    * tick the context subtree
-   * @param {Tick} tick 
-   * @param {*} childIndex 
+   * @param {Tick} tick
+   * @param {*} childIndex
    */
   tickContextTree(tick, childIndex) {
     var selected = this.contextChildren()[childIndex];
@@ -420,8 +420,8 @@ class ScoreSelector extends Composite {
     return this.contextManager.popContext(tick, selectedConvoIndex);
   }
 
-  /** 
-   * set a flag to evaluate another controller but the one running now 
+  /**
+   * set a flag to evaluate another controller but the one running now
    * @private
    * */
   requestYield(tick, request = true) {
@@ -429,9 +429,9 @@ class ScoreSelector extends Composite {
   }
 
   /**
-   * 
-   * @param {Tick} tick 
-   * @param {TickStatus} status 
+   *
+   * @param {Tick} tick
+   * @param {TickStatus} status
    */
   close(tick, status) {
     this.contextManager.close(tick, status);
@@ -440,7 +440,7 @@ class ScoreSelector extends Composite {
 
   /**
    * getter based on scorer for selectconvo
-   * @param {*} selectedConvoIndex 
+   * @param {*} selectedConvoIndex
    */
   newContextShouldReplaceOld(selectedConvoIndex) {
     return selectedConvoIndex != -1 ? this.scorerFor(selectedConvoIndex).properties["takeOverContext"] : false;
@@ -450,7 +450,7 @@ class ScoreSelector extends Composite {
 
   /**
    * get the context array
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   getContexts(tick) {
     return this.contextManager.getContexts(tick);

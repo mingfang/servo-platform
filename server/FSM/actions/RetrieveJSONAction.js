@@ -1,5 +1,5 @@
-var b3 = require('FSM/core/b3');
-var Action = require('FSM/core/action');
+var b3 = require('../core/b3');
+var Action = require('../core/action');
 var _ = require('underscore');
 
 /**

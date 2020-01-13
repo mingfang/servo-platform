@@ -4,31 +4,31 @@
  * Copyright (c) 2017-2019 Servo Labs Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to 
- * deal in the Software without restriction, including without limitation the 
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
  * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is 
+ * sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  * @private
  **/
-var statsManager = require('FSM/statsManager');
+var statsManager = require('./statsManager');
 var _ = require('underscore');
 
-var dblogger = require('utils/dblogger');
-var b3 = require('FSM/core/b3');
-var Tick = require('FSM/core/tick');
-var utils = require('utils/utils');
+var dblogger = require('../utils/dblogger');
+var b3 = require('./core/b3');
+var Tick = require('./core/tick');
+var utils = require('../utils/utils');
 
 /**
  * @typedef {Object} EntitiesToContextMapItem
@@ -58,8 +58,8 @@ const ContextManagerKeys = Object.freeze({
   EXPIREMINUTES: 600
 });
 /**
- * Manages a node with child contexts. 
- * 
+ * Manages a node with child contexts.
+ *
  * @memberof module:Core
  * @private
  */
@@ -73,9 +73,9 @@ class ContextManager {
   }
 
   /**
-   * 
-   * @param {Tick} tick 
-   * @returns {FoundContext} 
+   *
+   * @param {Tick} tick
+   * @returns {FoundContext}
    */
   noContext(tick) {
     return {
@@ -92,7 +92,7 @@ class ContextManager {
 
   /**
    * ContextManager initializer
-   * @param {BaseNode} node 
+   * @param {BaseNode} node
    */
   constructor(node) {
     this.node = node;
@@ -116,9 +116,9 @@ class ContextManager {
   }
 
   /**
-   * 
-   * @param {Tick} tick 
-   * @param {FoundContext} newContext 
+   *
+   * @param {Tick} tick
+   * @param {FoundContext} newContext
    * @return {boolean} is it a valid backtrack
    */
   isBacktrack(tick, newContext) {
@@ -138,7 +138,7 @@ class ContextManager {
    * @property {boolean}[isRootContext]
    * @property {number} index - an index of new context child of this.node.
    * @property {number} prevIndex - previous index of new context child of this.node.
-   * @property {boolean} [helper] true if this is a helper context 
+   * @property {boolean} [helper] true if this is a helper context
    * @property {boolean} [backtrack] true if this is a backtrack context
    * @property {boolean} [passThru] true if two consequitive AskAndMaps - do not use intent
    * @property {number} [score]
@@ -157,30 +157,30 @@ class ContextManager {
    * @property {string} intentId
    * @property {Map<KeyValueArrayPair>} entities
    * @property {number} score
-   * 
+   *
    */
   /****
    *
    * "search": search up to find the right context in the right level to switch to
-   * "map": map the message entities to the expected entities 
+   * "map": map the message entities to the expected entities
    * "switch": when u have a prev context, switch to a new one
    * "select": no context selected yet, need to select
    * Search & mapping up
-   * 
+   *
    *  for context switch & select:
    * 1. search by intent. if found
    *  a. switch
    *  b. map entities
-   * 
+   *
    * 2. for context select, otherwise search by entities. if found(meaning, we have a number >= 1 of entities match)
    *   a. map the entities iteratively by going up from the level we found
-   * 
+   *
    * 3. if its a trace back, and there's a backtrack child, switch to it, and then to the selected context
-   * 
+   *
    * 4. if there's pre-context child, and there's a selection . switch to it, and then to the selected context
-   * 
-   * 5. a backtrack or pre-context are called intermediary contexts. 
-   *  
+   *
+   * 5. a backtrack or pre-context are called intermediary contexts.
+   *
    */
 
 
@@ -188,7 +188,7 @@ class ContextManager {
    * for this manager, find the right contexts
    * try first by intents, otherwise try entities, otherwise helper
    * @param {Tick} tick
-   * @param {string} intentDirection - search direction for intents: "downwards" or "upwards", or both when undefined 
+   * @param {string} intentDirection - search direction for intents: "downwards" or "upwards", or both when undefined
    * @param {boolean} backtrackLimitPassed memory distance (for backtrack)
    * @return {Array<FoundContext>}
    */
@@ -201,7 +201,7 @@ class ContextManager {
     this.convertIntents(contextsParams);
 
     /**try to find a context using the entities:  no intent,or couldnt find a context for the intent.
-     *  see if there is a **current** context, see if it has such entity 
+     *  see if there is a **current** context, see if it has such entity
      * otherwise, check sibling contexts*/
     let ettMatchObj = this.selectContextWithMaxEntities(tick, intentDirection, distanceCounter);
     dblogger.flow('ettMatchObj:' + JSON.stringify(ettMatchObj));
@@ -215,7 +215,7 @@ class ContextManager {
       });
     }
     let retContextArray = [newContext];
-    // find default if no previous 
+    // find default if no previous
     var defaultContextIndex = -1,
       defaultContext;
     if (tick.target.exists() && newContext.score < 0 &&
@@ -238,10 +238,10 @@ class ContextManager {
       }
     }
 
-    // find helper context if no default 
+    // find helper context if no default
     var helperContextIndex, helperContext;
 
-    // if nothign was found and we search upwards, find helper context as default 
+    // if nothign was found and we search upwards, find helper context as default
     if (tick.target.exists() && !(newContext.index >= 0) &&
       defaultContextIndex < 0) {
       helperContext = contextsParams.find((ctxParam, index) => {
@@ -294,8 +294,8 @@ class ContextManager {
   }
 
   /**
-   * get the index of the helper context from here 
-   * @param {Array<FoundContext>} foundContexts 
+   * get the index of the helper context from here
+   * @param {Array<FoundContext>} foundContexts
    */
   helperContextIndex(foundContexts) {
     return foundContexts.findIndex((ctx) => {
@@ -305,7 +305,7 @@ class ContextManager {
 
   /**
    * print debug log
-   * @param {Array<FoundContext>}  foundContexts 
+   * @param {Array<FoundContext>}  foundContexts
    */
   debugLogContextsFound(foundContexts, tick) {
 
@@ -326,15 +326,15 @@ class ContextManager {
 
   /**
    * return true if there's a real context on the list
-   * @param {Array<FoundContext>} foundContexts 
+   * @param {Array<FoundContext>} foundContexts
    */
   contextFound(foundContexts) {
     var mostSignificantContext = foundContexts[0];
     return mostSignificantContext && mostSignificantContext.index >= 0 && mostSignificantContext.score > 0 /*no helper*/ ;
   }
   /**
-   * the current context of the process is on here 
-   * @param {Tick} tick 
+   * the current context of the process is on here
+   * @param {Tick} tick
    */
   isOnCurrentContext(tick) {
     let crtx = tick.process.currentContextEntities();
@@ -351,8 +351,8 @@ class ContextManager {
 
   /**
    * return true if the entityValue is found in ettExpectedValues
-   * @param {Array<any>} ettExpectedValues 
-   * @param {any} entityValue 
+   * @param {Array<any>} ettExpectedValues
+   * @param {any} entityValue
    */
   compareExpectedValues(ettExpectedValues, entityValue) {
 
@@ -368,10 +368,10 @@ class ContextManager {
   }
 
   /**
-   * 
-   * @param {Tick} tick 
-   * @param {ContextItem} contextDetails 
-   * @param {Target} target 
+   *
+   * @param {Tick} tick
+   * @param {ContextItem} contextDetails
+   * @param {Target} target
    * @param {boolean} countOnly true if not using the entities
    * @param {number} distanceCounter
    * @return {object} count of mappings that happened (if !countOnly) or due to happen
@@ -388,7 +388,7 @@ class ContextManager {
     }
     _.each(contextDetails.entities, (ett) => {
       let ettCount = 0;
-      // todo: if there are 2 entities in the same index, 
+      // todo: if there are 2 entities in the same index,
       // the usage of the first reduces the array, so entity index has to remain 0
       var entityValue = target.getEntity(ett.entityName, ett.entityIndex);
       let entityScore = target.getEntity(ett.entityName + "#confidence", 0) || 1;
@@ -444,8 +444,8 @@ class ContextManager {
 
   /**
    * countPastContextEntities
-   * @param {Tick} tick 
-   * @param {ContextItem} contextDetails 
+   * @param {Tick} tick
+   * @param {ContextItem} contextDetails
    *  @return {number} number of maps from past contexts to here
    */
   countPastContextEntities(tick, contextDetails) {
@@ -486,7 +486,7 @@ class ContextManager {
 
   /**
    * selects an index in the contexts that has the maximal entity match
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   selectContextWithMaxEntities(tick, intentDirection, distanceCounter = 0) {
     let maxEttCount = 0;
@@ -515,7 +515,7 @@ class ContextManager {
         let objPassed = this.mapPastUnmapedEntitiesToContext(tick, ctxParams[c], tick.target, true);
         ettCountAtPastTargets = objPassed.numberOfMaps;
         dblogger.flow('ettCountAtPastTargets ' + ettCountAtPastTargets);
-        // now use previously mapped entities for the counting! 
+        // now use previously mapped entities for the counting!
         // for downwards, non-intent entities, we allow them to be taken from previous conversations
         ettCountAtPastContexts = this.countPastContextEntities(tick, ctxParams[c]);
         dblogger.flow('ettCountAtPastContexts ' + ctxParams[c].entityName + " " + ettCountAtPastContexts);
@@ -541,13 +541,13 @@ class ContextManager {
 
   /**
    * set the current context entities
-   * if this is the root, its not considered a context to 
+   * if this is the root, its not considered a context to
    * @param {Tick} tick
    * @param {ContextManagerEntities} [contextEntities]
    */
   setCurrentContext(tick, contextEntities) {
     let nodeId = (contextEntities && contextEntities.node.id) || this.node.id;
-    var fsmManager = require('FSM/fsm-manager');
+    var fsmManager = require('../FSM/fsm-manager');
     var btRoot = fsmManager.getBehaviorTree(tick.process.fsm_id);
     // never save the root as a context
     if (nodeId !== btRoot.root.id && tick.tree.id !== tick.process.properties().pipeTreeId) {
@@ -562,7 +562,7 @@ class ContextManager {
 
   /**
    * build the tree of contextManagers
-   * @param {ContextManager} parentContextManager 
+   * @param {ContextManager} parentContextManager
    * @param {BaseNode} node - current node
    */
   buildManagerTree(parentContextManager, node) {
@@ -586,8 +586,8 @@ class ContextManager {
   }
 
   /**
-   * Assign the current target to all contexts 
-   * @param {Tick} tick 
+   * Assign the current target to all contexts
+   * @param {Tick} tick
    * @param {Array<FoundContext>} contextsSelected
    */
   assignTargetToContexts(tick, contextsSelected) {
@@ -603,10 +603,10 @@ class ContextManager {
   /**
    * switch to the first context on the array provided; if array has more contexts, push them for further switch
    * @param {Tick} tick
-   * @param {Array<FoundContext>} contextsSelected 
-   * @param {boolean} noPrev - dont save previous  
+   * @param {Array<FoundContext>} contextsSelected
+   * @param {boolean} noPrev - dont save previous
    * @param {boolean} useTarget - true if need to use the tick target
-   * @return {boolean} true if switched 
+   * @return {boolean} true if switched
    */
   switchContext(tick, contextsSelected, noPrev, useTarget = true) {
     // the new context is the first one - either intermediate or just a single context
@@ -625,7 +625,7 @@ class ContextManager {
 
     var oldContext = contextFrames[contextFrames.length - 1]; // last /current one
     // add the selected context(s) to the previous ones
-    // REMOVED CONDITION:unless its backtracking (== a question node) 
+    // REMOVED CONDITION:unless its backtracking (== a question node)
     var framesWithoutSelectedContext = [];
     //  if (!firstContext.backtrack) {
     framesWithoutSelectedContext = contextFrames.filter((item) => {
@@ -633,7 +633,7 @@ class ContextManager {
     });
     //}
 
-    // push new frame always last, and filter out the later duplicates (duplicates can happen if we have intermediaries) 
+    // push new frame always last, and filter out the later duplicates (duplicates can happen if we have intermediaries)
     contextFrames = framesWithoutSelectedContext.concat(contextsSelected);
     dblogger.flow('switchContext from ' + prevSelectedConvoIndex + ' to ' + selectedConvoIndex + ' at ' + this.node.summary(tick));
     // now, find previous and save last opened leaf
@@ -679,7 +679,7 @@ class ContextManager {
 
   /**
    * deserialize an array of contexts
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @param {Array<FoundContexts>} array of context frames
    */
   deserializeContexts(tick, cframes) {
@@ -706,8 +706,8 @@ class ContextManager {
 
 
   /**
-   * serialize an array 
-   * @param {Tick} tick 
+   * serialize an array
+   * @param {Tick} tick
    * @param {Array<FoundContext>} contextFrames - array of context frames
    * @return  {Array<Object>} array of context frames serialized
    */
@@ -771,7 +771,7 @@ class ContextManager {
   /**
    * map context fields to parent
    * @param {Tick} tick
-   * @param {Object} [contextProperties] - properties of the context-managed node 
+   * @param {Object} [contextProperties] - properties of the context-managed node
    */
   mapEntitiesToParent(tick, contextProperties) {
     var parentContextManagerEtts = this.findNextContextManagerEntities(tick);
@@ -804,7 +804,7 @@ class ContextManager {
   /**
    * get the key/value from first context-managed ancestor which keeps it
    * @param {Tick} tick
-   * @param {string} key 
+   * @param {string} key
    * @param {boolean?} limited - if true, do not continue beyond a context which is a newContext node
    * @return {any}  value
    */
@@ -837,8 +837,8 @@ class ContextManager {
 
   /**
    * saves the ctxMgrEtts as the current context entities (currentContextEntities)
-   * @param {Tick} tick 
-   * @param {ContextManagerEntities} ctxMgrEtts 
+   * @param {Tick} tick
+   * @param {ContextManagerEntities} ctxMgrEtts
    */
   saveGlobalContext(tick, ctxMgrEtts) {
     tick.process.currentContextEntities(ctxMgrEtts.node && {
@@ -848,7 +848,7 @@ class ContextManager {
   }
 
   /**
-   * when done with this context, called to return context to parent 
+   * when done with this context, called to return context to parent
    * @param {Tick} tick
    * @return {boolean} true if parent node
    */
@@ -865,8 +865,8 @@ class ContextManager {
 
   /**
    * put intentId as an entity
-   * @param {Tick} tick 
-   * @param {ContextItem} contextsParams 
+   * @param {Tick} tick
+   * @param {ContextItem} contextsParams
    */
   convertIntents(contextsParams) {
     for (let ctx of contextsParams) {
@@ -886,7 +886,7 @@ class ContextManager {
 
   /**
    * save unused entities for later use
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @param {Target} target with entities
    */
   saveUnmappedEntitiesToContext(tick, target) {
@@ -905,9 +905,9 @@ class ContextManager {
 
   /**
    * search the tree upwards to see if in a previous context we had the same entity that was not mapped yet
-   * @param {Tick} tick 
-   * @param {ContextItem} contextDetails 
-   * @param {boolean?} countOnly - count possible mappings only, no actual maps  
+   * @param {Tick} tick
+   * @param {ContextItem} contextDetails
+   * @param {boolean?} countOnly - count possible mappings only, no actual maps
    * @return {object} - number Of Maps, intentid involved
    */
   mapPastUnmapedEntitiesToContext(tick, contextDetails, target, countOnly) {
@@ -968,10 +968,10 @@ class ContextManager {
   }
 
   /**
-   * maps from the context expected entities to the context memory fields, 
+   * maps from the context expected entities to the context memory fields,
    * according to the map defined at the context-managed node properties
-   * @param {Tick} tick 
-   * @param {Array<EntitiesToContextMapItem>} map - a array of expected context entities to context fields 
+   * @param {Tick} tick
+   * @param {Array<EntitiesToContextMapItem>} map - a array of expected context entities to context fields
    * @param {number} childIndex - current child Index
    * @param {Array<FoundContext>} contextFrames
    * @returns {number} - number of maps
@@ -1004,9 +1004,9 @@ class ContextManager {
   }
 
   /**
-   * does the contextDetails has this intentId 
-   * @param {ContextItem} contextDetails 
-   * @param {string} intentIdToFind 
+   * does the contextDetails has this intentId
+   * @param {ContextItem} contextDetails
+   * @param {string} intentIdToFind
    * @return {string} string or undefined
    */
   hasIntent(contextDetails, intentIdToFind) {
@@ -1025,15 +1025,15 @@ class ContextManager {
 
   /**
    * the context memories are set at the relevant child's local memory, under CONTEXTMEM() key
-   * 
+   *
    */
   /**
    * set a context field
    * ASSUMES the call to this function can come only from within the current context
    * @param {Tick} tick
-   * @param {string} fieldName 
-   * @param {string} value 
-   * @return {string} value set 
+   * @param {string} fieldName
+   * @param {string} value
+   * @return {string} value set
    */
   setContextField(tick, fieldName, value) {
 
@@ -1054,7 +1054,7 @@ class ContextManager {
 
   /**
    * return properties object of current context
-   * @param {*} tick 
+   * @param {*} tick
    */
   currentContextProperties(tick) {
     return this.node.properties.contexts[this.node.currentChildIndex(tick)];
@@ -1063,7 +1063,7 @@ class ContextManager {
 
   /**
    * get full object of current selected context memory
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @return {Object}
    */
   getContextMemory(tick) {
@@ -1073,7 +1073,7 @@ class ContextManager {
 
   /**
    * clears current selected context memory
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   clearContext(tick) {
     this.node.currentContextChild(tick).local(tick, ContextManagerKeys.CONTEXTMEM, {});
@@ -1081,7 +1081,7 @@ class ContextManager {
 
   /**
    * clears all  context memories at the current context manager
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @param {boolean} leaveCurrent - leaves current context intact
    */
   clearAllContexts(tick, leaveCurrent) {
@@ -1111,8 +1111,8 @@ class ContextManager {
 
   /**
    * saves current context memeory at the lastContext field at the current context-managed node
-   * not used 
-   * @param {Tick} tick 
+   * not used
+   * @param {Tick} tick
    * @private
    */
   saveLastContext(tick) {
@@ -1128,7 +1128,7 @@ class ContextManager {
 
   /**
    * deduplicate the  context array
-   * @param {Array<FoundContext>} contextFrames1 
+   * @param {Array<FoundContext>} contextFrames1
    * @param {boolean} latterPrevail if true, the latter context wins - it would set the prevIndex and more importantly, the target
    */
   dedupeContexts(contextFrames1, latterPrevail) {
@@ -1167,13 +1167,13 @@ class ContextManager {
     var contexts = this.getContextFrames(tick);
     // POP
     var poppedContext = contexts.pop();
-    // if there are duplicate contexts, its because there was an intermediary from backtrack. if it failes, we discard the backtracked context  
+    // if there are duplicate contexts, its because there was an intermediary from backtrack. if it failes, we discard the backtracked context
     contexts = this.dedupeContexts(contexts, status === b3.SUCCESS());
 
     // save
     this.setContextFrames(tick, contexts);
 
-    // SWITCH TO PREVIOUS, if any 
+    // SWITCH TO PREVIOUS, if any
     if (!contexts.length || contexts[contexts.length - 1].index === -1) {
       //if (status === b3.SUCCESS()) {
       this.returnContextToParent(tick);
@@ -1196,7 +1196,7 @@ class ContextManager {
       dblogger.assert(prevContext.leafTreeId, "leafnodeid and leaftreeid should come together")
       dblogger.flow('switching to prev. tree id:' + prevContext.leafTreeId + " leaf id:" + prevContext.leafNodeId);
       // now re-open that one child (so any outstanding requests could be cancelled?)
-      var fsmManager = require('FSM/fsm-manager');
+      var fsmManager = require('./fsm-manager');
       var bt = fsmManager.getBehaviorTree(prevContext.leafTreeId);
       dblogger.assert(bt, 'Cant find bt when switching context to prev. treeId:' + prevContext.leafTreeId);
 
@@ -1205,7 +1205,7 @@ class ContextManager {
       var leafNode = bt.nodes[prevContext.leafNodeId];
       dblogger.assert(leafNode, 'Cant find leaf node when switching context to prevCant find leaf node when switching context to prev. leaf id:' + prevContext.leafNodeId);
       var newTick = new Tick(tick.process, bt, tick.target, tick.depth);
-      // TODO: create tick as if it was really reached from a regular tick 
+      // TODO: create tick as if it was really reached from a regular tick
       // the closeme only cares about the tree id TODO: make bt.closeCurrentLeaf()
       leafNode.waitCode(newTick, status); // this will stop the node on next tick. if its 2, it will fail the leaf node
       if (leafNode.properties && leafNode.properties.replayActionOnReturnFromContextSwitch && (
@@ -1230,7 +1230,7 @@ class ContextManager {
 
   /**
    * opens the context - select the right context, saves it as global context, and switch to it
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @param {boolean} useTarget: if false, do not use the target
    * @return {Array<FoundContext>}
    */
@@ -1249,7 +1249,7 @@ class ContextManager {
     // initialize the running child
     this.node.local(tick, 'runningChild', foundContexts[foundContexts.length - 1].index);
 
-    // only now you can open openContext 
+    // only now you can open openContext
     statsManager.openContext(tick, this.node);
 
     // set this as the context,when opened.

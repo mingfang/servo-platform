@@ -1,9 +1,9 @@
-var b3 = require('FSM/core/b3');
+var b3 = require('../core/b3');
 var _ = require('underscore');
-var Action = require('FSM/core/action');
-var utils = require('utils/utils');
-var Tick = require('FSM/core/tick');
-var dblogger = require('utils/dblogger');
+var Action = require('../core/action');
+var utils = require('../../utils/utils');
+var Tick = require('../core/tick');
+var dblogger = require('../../utils/dblogger');
 
 class Yield extends Action {
 
@@ -37,10 +37,10 @@ class Yield extends Action {
     }
 
     //var isChildAScorer = parent.name==='ScoreSelector' && parent.isScorer(tick,node);
-    // if parent is a (first) scoreSelector 
+    // if parent is a (first) scoreSelector
     // or the parent is the root
     if (parent.name === 'ScoreSelector' || !grandParentId) {
-      // found! 
+      // found!
       return {
         context: parent,
         scorer: node,

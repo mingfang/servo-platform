@@ -1,9 +1,9 @@
-var b3 = require('FSM/core/b3');
-var Action = require('FSM/core/action');
+var b3 = require('../core/b3');
+var Action = require('../core/action');
 var _ = require('underscore');
 var LokiJS = require('lokijs');
-var dblogger = require('utils/dblogger');
-var utils = require('utils/utils');
+var dblogger = require('../../utils/dblogger');
+var utils = require('../../utils/utils');
 
 /**
  * Use mongoDB's find(query) on an array provided in sourceFieldName.
@@ -21,14 +21,14 @@ class ArrayQueryAction extends Action {
      * Node parameters
      * @property parameters
      * @type {Object}
-     * @property {Object} settings 
+     * @property {Object} settings
      * @property {MemoryField} settings.sourceFieldName
      * @property {MemoryField} settings.targetFieldName
      * @property {string} [settings.sort] - asc or desc
      * @property {string} [settings.sortFieldName] - the field name on which to apply the sort
      * @property {number} settings.resultIndex
-     * @property {ExpressionString} settings.query - an expression with the query 
-     * 
+     * @property {ExpressionString} settings.query - an expression with the query
+     *
      **/
     this.parameters = _.extend(this.parameters, {
       'sourceFieldName': '',
@@ -44,7 +44,7 @@ class ArrayQueryAction extends Action {
 
   /**
    * searches the sourceField
-   * @param {*} tick 
+   * @param {*} tick
    * @private
    */
   tick(tick) {

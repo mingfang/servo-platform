@@ -3,7 +3,7 @@ var Promise = require('bluebird');
 
 var Logger = require('./logger');
 var lokijs = require('lokijs');
-var Deferred = require('utils/deferred');
+var Deferred = require('../utils/deferred');
 
 var MessageModel = require('../models/message-model');
 //var UserModel = require('../models/user-model');
@@ -66,9 +66,9 @@ class _Process {
 
   }
   /**
-   * 
-   * @param {string} keyName 
-   * @param {string} processLinkId 
+   *
+   * @param {string} keyName
+   * @param {string} processLinkId
    */
   static getProcessByKeyId(keyName, processLinkId) {
     return new Promise(function (resolve, reject) {
@@ -89,8 +89,8 @@ class _Process {
   }
 
   /**
-   * 
-   * @param {Fsm} fsm 
+   *
+   * @param {Fsm} fsm
    */
   static getFSMProcesses(fsm) {
     if (_.has(fsm.properties, "loadAllProccesses") && !fsm.properties.loadAllProccesses) {

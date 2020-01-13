@@ -1,12 +1,12 @@
 // namespace:
-var b3 = require('FSM/core/b3');
-var Action = require('FSM/core/action')
+var b3 = require('../core/b3');
+var Action = require('../core/action')
 var _ = require('underscore');
-var dblogger = require('utils/dblogger');
-var PipeManager = require("pipes/pipemanager");
-var utils = require('utils/utils');
+var dblogger = require('../../utils/dblogger');
+var PipeManager = require("../../pipes/pipemanager");
+var utils = require('../../utils/utils');
 /**
- * Trains an intent based on context fields whose name taken from node parameters. 
+ * Trains an intent based on context fields whose name taken from node parameters.
  * Intent name taken from intentNameField, using trainingTextField. Using current NLU engine
  *  @memberof module:Actions
  * @private

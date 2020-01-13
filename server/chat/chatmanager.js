@@ -5,10 +5,10 @@ var facebookChatDriver = require('./facebook.v2').getInst();
 var config = require("../config");
 var chatsim;
 var alexaService = require('./alexa.v2').getInst();
-var utils = require("utils/utils");
-var dblogger = require("utils/dblogger");
-var fsmEventEmitter = require('FSM/fsm-event-emitter.js');
-var ticker = require('FSM/ticker').getInst();
+var utils = require("../utils/utils");
+var dblogger = require("../utils/dblogger");
+var fsmEventEmitter = require('../FSM/fsm-event-emitter.js');
+var ticker = require('../FSM/ticker').getInst();
 var twilioService = require('./twilio').getInst();
 var restPostService = require('./rest-post').getInst();
 
@@ -62,7 +62,7 @@ class ChatManager {
     dblogger.flow('chatManager.sendMessages ' + (prompt.text || ""), prompt);
     if (customer && (customer.fbId || customer.channel === "facebook")) {
       return new Promise(function (resolve, reject) {
-        var fsmModel = require('models/fsmmodel');
+        var fsmModel = require('../models/fsmmodel');
         var fsm = fsmModel.getFSMSync(process.fsm_id, process.userId);
         if (!fsm) {
           dblogger.log('WARNING: no fsm ', process.fsm_id);

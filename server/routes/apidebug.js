@@ -1,21 +1,21 @@
 var _wsServer;
-var chatsim = require('chat/chatsim').getInst();
-var websocketDriver = require('chat/websocket-driver').getInst();
-var debugFSM = require('FSM/debug-FSM');
+var chatsim = require('../chat/chatsim').getInst();
+var websocketDriver = require('../chat/websocket-driver').getInst();
+var debugFSM = require('../FSM/debug-FSM');
 var WebSocketServer = require('websocket').server;
-var dblogger = require('utils/dblogger');
+var dblogger = require('../utils/dblogger');
 var _ = require('underscore');
 var _connections = {};
 var FSMManager;
 
 function originIsAllowed(origin) {
-  // put logic here to detect whether the specified origin is allowed. 
+  // put logic here to detect whether the specified origin is allowed.
   return true;
 }
 
 /**
  * for breakpoint reached
- * @param {*} bpData 
+ * @param {*} bpData
  */
 function onBreakpointReached(bpData) {
 
@@ -30,7 +30,7 @@ function onBreakpointReached(bpData) {
 
 /**
  * for logging
- * @param {*} logData 
+ * @param {*} logData
  */
 function onClientLogger(processId, logData) {
   try {
@@ -45,7 +45,7 @@ function onClientLogger(processId, logData) {
 class ApiDebug {
   /**
    * on first message add connection
-   * @param {*} pid 
+   * @param {*} pid
    */
   static addConnection(message, connection) {
 
@@ -73,7 +73,7 @@ class ApiDebug {
     var conn = _.each(_connections, (c, key) => {
       if (c && (c.connection === connection)) {
         _connections[key] = undefined;
-        FSMManager = require('FSM/fsm-manager');
+        FSMManager = require('../FSM/fsm-manager');
         FSMManager.tickStop(key);
         dblogger.removeClientLoggerCallback(key);
       }
@@ -86,11 +86,11 @@ class ApiDebug {
     }
     _wsServer = new WebSocketServer({
       httpServer: ApiDebug.httpServoServer,
-      // You should not use autoAcceptConnections for production 
-      // applications, as it defeats all standard cross-origin protection 
-      // facilities built into the protocol and the browser.  You should 
-      // *always* verify the connection's origin and decide whether or not 
-      // to accept it. 
+      // You should not use autoAcceptConnections for production
+      // applications, as it defeats all standard cross-origin protection
+      // facilities built into the protocol and the browser.  You should
+      // *always* verify the connection's origin and decide whether or not
+      // to accept it.
       autoAcceptConnections: false
     });
 
@@ -99,7 +99,7 @@ class ApiDebug {
 
     _wsServer.on('request', function (request) {
       if (!originIsAllowed(request.origin)) {
-        // Make sure we only accept requests from an allowed origin 
+        // Make sure we only accept requests from an allowed origin
         request.reject();
         console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
         return;
@@ -131,7 +131,7 @@ class ApiDebug {
               case 'chatsim':
                 switch (message.command) {
                   case 'handshake':
-                    // do nothing  
+                    // do nothing
                     break;
                   default:
                     chatsim.onMessage(message);
@@ -223,7 +223,7 @@ class ApiDebug {
     ApiDebug.start(app);
   }
 
-  /** 
+  /**
    * send by process' connection
    */
   static send(pid, data) {

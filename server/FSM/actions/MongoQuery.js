@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
-var b3 = require('FSM/core/b3');
-var Action = require('FSM/core/action');
+var b3 = require('../core/b3');
+var Action = require('../core/action');
 var _ = require('underscore');
 var _mongodb = require('mongodb');
-var dblogger = require('utils/dblogger');
-var utils = require('utils/utils');
+var dblogger = require('../../utils/dblogger');
+var utils = require('../../utils/utils');
 
 /**
  * connect and query MongoDB according to the fields,  on an collection provided in collectionName." +
@@ -22,13 +22,13 @@ class MongoQuery extends Action {
          * Node parameters
          * @property parameters
          * @type {Object}
-         * @property {Object} parameters 
+         * @property {Object} parameters
          * @property {string} parameters.collectionName collection name
-         * @property {string} parameters.dbName database name         * 
+         * @property {string} parameters.dbName database name         *
          * @property {string} parameters.url -  connection url (defaults to 'mongodb://localhost:27017')
          * @property {MemoryField} settings.targetFieldName
-         * @property {ExpressionString} settings.query - an expression with the query code, called as a method on collection. eg: find({a:1}) 
-         * 
+         * @property {ExpressionString} settings.query - an expression with the query code, called as a method on collection. eg: find({a:1})
+         *
          **/
         this.parameters = _.extend(this.parameters, {
             'collectionName': '',
@@ -50,7 +50,7 @@ class MongoQuery extends Action {
 
     /**
      * searches the sourceField
-     * @param {*} tick 
+     * @param {*} tick
      * @private
      */
     tick(tick) {
@@ -130,10 +130,10 @@ class MongoQuery extends Action {
 
     /**
      * safe(r) eval code for the query
-     * @param {*} data 
-     * @param {string} codeToEval 
-     * @param {*} collection 
-     * @param {function} cb 
+     * @param {*} data
+     * @param {string} codeToEval
+     * @param {*} collection
+     * @param {function} cb
      */
     evalQuery(data, codeToEval, collection, cb) {
         // eslint-disable-next-line no-unused-vars

@@ -1,8 +1,8 @@
-var b3 = require('FSM/core/b3');
-var Action = require('FSM/core/action');
+var b3 = require('../core/b3');
+var Action = require('../core/action');
 var _ = require('underscore');
-var dblogger = require('utils/dblogger');
-var utils = require('utils/utils');
+var dblogger = require('../../utils/dblogger');
+var utils = require('../../utils/utils');
 /**
  * Posts a JSON payload to a URL, and sets fieldName to the returned object
  * Memory field (global./context./volatile. etc) can be used inside the payload. If the payload is a string, just use the memory fields as you would in
@@ -148,7 +148,7 @@ class PostAction extends Action {
           }
 
         }
-        // if its a form data, make it 
+        // if its a form data, make it
         if (options.form) {
           options.headers = _.extend(options.headers, {
             'cache-control': 'no-cache',

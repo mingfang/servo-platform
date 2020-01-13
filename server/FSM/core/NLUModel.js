@@ -1,15 +1,15 @@
 var b3 = require('./b3')
 var Decorator = require('./decorator')
-var fsmModel = require('models/fsmmodel')
-var dblogger = require('utils/dblogger');
-var utils = require('utils/utils');
+var fsmModel = require('../../models/fsmmodel')
+var dblogger = require('../../utils/dblogger');
+var utils = require('../../utils/utils');
 var _ = require('underscore');
 
 /**
- * NLUModel is the base class for all machine learning models nodes. 
- * it is a decorartor whose purpose is to change the current model used at 
- * the root of tree to a certain model. the model depends on the input type - 
- * for chat bot it would be an NLU model, for voice, ASR + NLU, for image, some image recognitions .  
+ * NLUModel is the base class for all machine learning models nodes.
+ * it is a decorartor whose purpose is to change the current model used at
+ * the root of tree to a certain model. the model depends on the input type -
+ * for chat bot it would be an NLU model, for voice, ASR + NLU, for image, some image recognitions .
  * @memberof module:Core
  * @private
  **/
@@ -25,7 +25,7 @@ class NLUModel extends Decorator {
 
   /**
    * overridable, reset waitRetCode
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   open(tick) {
     this.waitCode(tick, undefined);

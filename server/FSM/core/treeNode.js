@@ -1,22 +1,22 @@
 var _ = require('underscore');
 
-var dblogger = require("utils/dblogger.js");
+var dblogger = require("../../utils/dblogger.js");
 
 var b3 = require('./b3');
-var BaseNode = require('FSM/core/baseNode');
+var BaseNode = require('./baseNode');
 
 var Tick = require('./tick');
 /**
- * TreeNode encapsulates a sub tree. 
+ * TreeNode encapsulates a sub tree.
  * @memberof module:Core
- * 
+ *
  */
 class TreeNode extends BaseNode {
 
   /**
-   * 
-   * @param {BaseNode} node 
-   * @param {BehaviorTree} tree 
+   *
+   * @param {BaseNode} node
+   * @param {BehaviorTree} tree
    */
   constructor(node, tree) {
     super();
@@ -27,7 +27,7 @@ class TreeNode extends BaseNode {
     this.description = node.description;
     this.properties = node.properties;
     /** holds a reference to the subtree
-     * @member {BaseNode} 
+     * @member {BaseNode}
      * */
     this.child = tree;
 
@@ -35,7 +35,7 @@ class TreeNode extends BaseNode {
 
   /**
    * create a new tick object that is relevant to the tree below this node
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   createChildTick(tick) {
     var newTick = new Tick();
@@ -57,8 +57,8 @@ class TreeNode extends BaseNode {
     if (!this.child || !this.child.root) {
       return b3.ERROR();
     }
-    // we use a different tree object for every subtree, so we have a unique 
-    // tree id for set/get operations 
+    // we use a different tree object for every subtree, so we have a unique
+    // tree id for set/get operations
     var subTreeTick = new Tick();
     _.extend(subTreeTick, tick);
     subTreeTick.tree = this.child;
@@ -69,9 +69,9 @@ class TreeNode extends BaseNode {
   };
 
   /**
-   * 
-   * @param {Tick} tick 
-   * @param {TickStatus} status 
+   *
+   * @param {Tick} tick
+   * @param {TickStatus} status
    */
   close(tick, status) {
 

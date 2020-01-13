@@ -1,11 +1,11 @@
 // namespace:
-var b3 = require('FSM/core/b3');
-var Action = require('FSM/core/action')
+var b3 = require('../core/b3');
+var Action = require('../core/action')
 
 
 /**
- * Closes current context, including children. This is needed for re-entry. It resets all the runningChilds and allowing re-open 
- * 
+ * Closes current context, including children. This is needed for re-entry. It resets all the runningChilds and allowing re-open
+ *
  *  @memberof module:Actions
  **/
 class CloseAllContexts extends Action {

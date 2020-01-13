@@ -1,7 +1,7 @@
-var b3 = require('FSM/core/b3');
+var b3 = require('../core/b3');
 var _ = require('underscore');
-var Action = require('FSM/core/action');
-var utils = require('utils/utils');
+var Action = require('../core/action');
+var utils = require('../../utils/utils');
 
 /**
  * removes current target(s) from the tick
@@ -13,12 +13,12 @@ class RemoveTargetAction extends Action {
     super();
     this.title = this.name = 'RemoveTargetAction';
 
-    /** 
+    /**
      * Node parameters
      * @property parameters
      * @type {Object}
      * @property  {boolean} parameters.removeAll if true, removes all targets
-     *  
+     *
      */
     this.parameters = _.extend(this.parameters, {
       "removeAll": false
@@ -29,7 +29,7 @@ class RemoveTargetAction extends Action {
   /**
    * Tick method.
    *
-   * @private 
+   * @private
    * @param {Tick} tick A tick instance.
    * @return {TickStatus} A state constant.
    **/
@@ -43,7 +43,7 @@ class RemoveTargetAction extends Action {
 
       return b3.SUCCESS();
     } catch (err) {
-      var dblogger = require('utils/dblogger');
+      var dblogger = require('../../utils/dblogger');
       dblogger.error(err);
       return b3.FAILURE();
     }

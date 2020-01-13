@@ -1,4 +1,4 @@
-var NLUModel = require('FSM/core/NLUModel');
+var NLUModel = require('../core/NLUModel');
 var _ = require('underscore');
 /**
  * Machine Learning models for classifications
@@ -7,7 +7,7 @@ var _ = require('underscore');
  **/
 /**
  * LUIS machine learning model - NLU classifier
- * 
+ *
  */
 class LUISModel extends NLUModel {
 
@@ -21,9 +21,9 @@ class LUISModel extends NLUModel {
         *
         * @property parameters
         * @type {Object}
-        * @property {Object} parameters.nlu -this gets added onto the process properties to get used for NLU. 
+        * @property {Object} parameters.nlu -this gets added onto the process properties to get used for NLU.
         * Use language code as a key: {
-        * 
+        *
         * 'en': {
                "engine": "luis-strong",
                "app_id": '',

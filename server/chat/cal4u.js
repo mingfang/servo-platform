@@ -94,7 +94,7 @@ function start(fsm) {
 
 
 
-  //router.get('/cal4u/' + userDir + '/' + fsm.id, function (req, res) {  
+  //router.get('/cal4u/' + userDir + '/' + fsm.id, function (req, res) {
 
   // validate(req, res, facebookOptions.validationToken);
 
@@ -863,7 +863,7 @@ function actOnProcess(messageObj, processObj) {
 
       } else {
 
-        dblogger = require('utils/dblogger');
+        dblogger = require('../utils/dblogger');
 
         dblogger.assert(_.isObject(value), "value needs to be an object to replace all of processData");
 

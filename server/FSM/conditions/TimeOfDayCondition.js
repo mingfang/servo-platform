@@ -1,6 +1,6 @@
-var b3 = require('FSM/core/b3');
-var Condition = require('FSM/core/condition');
-var Utils = require('utils/utils');
+var b3 = require('../core/b3');
+var Condition = require('../core/condition');
+var Utils = require('../../utils/utils');
 
 class TimeOfDayCondition extends Condition {
 

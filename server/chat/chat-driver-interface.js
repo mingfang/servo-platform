@@ -1,4 +1,4 @@
-var config = require('config');
+var config = require('../config');
 var express = require('express');
 var dblogger = require('../utils/dblogger');
 var PipeManager = require("../pipes/pipemanager");
@@ -18,11 +18,11 @@ class ChatDriverInterface {
   }
 
   /**
-   * @param {*} response 
-   * @param {string} toId 
+   * @param {*} response
+   * @param {string} toId
    * @param {*} tree
-   * @param {*} node 
-   * @param {Process} process 
+   * @param {*} node
+   * @param {Process} process
    * @return {Promise}
    */
   sendMessage(response, toId, tree, node, processObj) {
@@ -30,7 +30,7 @@ class ChatDriverInterface {
     var sessionObj = processObj.volatile('sessionObj');
     return new Promise((resolve) => {
       if (sessionObj && sessionObj.responseObj) {
-        // TODO: add message running index?  
+        // TODO: add message running index?
         var xObj = _exchanges.shift();
 
         sessionObj.responseObj.json(response);
@@ -45,9 +45,9 @@ class ChatDriverInterface {
 
   /**
    * process the request
-   * @param {*} req 
-   * @param {*} res 
-   * @param {*} fsm 
+   * @param {*} req
+   * @param {*} res
+   * @param {*} fsm
    */
   processRequest(req, res, fsm) {
     try {
@@ -114,7 +114,7 @@ class ChatDriverInterface {
 
   /**
    * create a process id by the generating user id, and the fsmId
-   * @param {MessageObject} mOject 
+   * @param {MessageObject} mOject
    */
   getProccessID(mOject) {
     return this.pidPrefix() + mOject.fromUser.id + "--" + mOject.toUser.id + "--" + mOject.fsmId;
@@ -126,8 +126,8 @@ class ChatDriverInterface {
 
   /**
    * return a message object
-   * @param {*} data 
-   * @param {*} fsmId 
+   * @param {*} data
+   * @param {*} fsmId
    */
   createMessageObject(data, fsmId) {
 
@@ -174,9 +174,9 @@ class ChatDriverInterface {
   }
 
   /**
-   * 
-   * @param {string} id 
-   * @param {MessageModel} messageObj 
+   *
+   * @param {string} id
+   * @param {MessageModel} messageObj
    */
   getProcessByID(id, fsm, messageObj) {
 
@@ -212,10 +212,10 @@ class ChatDriverInterface {
 
 
   /** see if a process exists, create if needed, and act on it with the messageObj
-   * 
-   * @param {*} messageObj 
-   * @param {*} pid 
-   * @param {*} fsm 
+   *
+   * @param {*} messageObj
+   * @param {*} pid
+   * @param {*} fsm
    */
   getCreateProcessAndMessage(messageObj, pid, fsm) {
     return new Promise((resolve, reject) => {
@@ -284,9 +284,9 @@ class ChatDriverInterface {
 
 
   /**
-   * calcs and sets the language for a process. 
-   * @param {*} processObj 
-   * @param {*} fsm 
+   * calcs and sets the language for a process.
+   * @param {*} processObj
+   * @param {*} fsm
    */
   calcLang(processObj, fsm) {
     var globalData = processObj && processObj.data(); // this is similar to Node.global memory
@@ -302,9 +302,9 @@ class ChatDriverInterface {
   }
 
   /**
-   * 
-   * @param {*} messageObj 
-   * @param {Process} processObj 
+   *
+   * @param {*} messageObj
+   * @param {Process} processObj
    */
   actOnProcess(messageObj, processObj) {
     FSMManager = FSMManager || require("../FSM/fsm-manager"); // require now if not yet required (to avoid circular dependency)
@@ -350,8 +350,8 @@ class ChatDriverInterface {
 
   /**
    * starts a map of fsms
-   * @param {*} app 
-   * @param {Map} fsms 
+   * @param {*} app
+   * @param {Map} fsms
    */
   startAll(app, fsms) {
     for (var key in fsms) {

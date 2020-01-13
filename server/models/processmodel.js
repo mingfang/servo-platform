@@ -3,12 +3,12 @@ var _ = require('underscore');
 var dblogger = require("../utils/dblogger.js");
 var Process = require('../FSM/core/process');
 var DAL = require("../dal/router");
-var cacheFactory = require('models/cache-factory');
-var ticker = require('FSM/ticker').getInst();
-var utils = require('utils/utils');
+var cacheFactory = require('./cache-factory');
+var ticker = require('../FSM/ticker').getInst();
+var utils = require('../utils/utils');
 
 // useClones:false is important to set due to the following memebers:
-// properties 
+// properties
 // session (alexa and others)
 // if we need to move it to clonable, then we need to find solutions for these
 // TODO: rethink stdTTL. if we enable it, need to make sure process is reloaded otherwise getFromCache fails
@@ -218,7 +218,7 @@ ProcessModel.upsert = function (processObj, message) {
         resolve(id);
       }).catch((err) => {
         console.error('upsert problem:', err);
-        // tolerate 
+        // tolerate
         _cache.set(id, processObj);
         resolve(id);
       });

@@ -1,6 +1,6 @@
 
-var b3 = require('FSM/core/b3')
-var Decorator = require('FSM/core/decorator');
+var b3 = require('../core/b3')
+var Decorator = require('../core/decorator');
 
 class DataContext extends Decorator {
     constructor() {

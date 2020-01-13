@@ -1,8 +1,8 @@
-var b3 = require('FSM/core/b3');
-var Condition = require('FSM/core/condition');
-var utils = require('utils/utils');
-var statsManager = require('FSM/statsManager')
-var dblogger = require('utils/dblogger');
+var b3 = require('../core/b3');
+var Condition = require('../core/condition');
+var utils = require('../../utils/utils');
+var statsManager = require('../statsManager')
+var dblogger = require('../../utils/dblogger');
 
 class DailyQuotaCondition extends Condition {
 

@@ -1,16 +1,13 @@
 // add this path to requires
-require('app-module-path').addPath(__dirname + "/../..");
-var fs = require('fs-extra')
-let chatManager = require('chat/chatmanager');
-let FSM = require('FSM/fsm-manager');
-let fsmModel = require('models/fsmmodel');
-let MockupTicker = require('spec/support/mockup-ticker').getInst();
+let chatManager = require('../../chat/chatmanager');
+let FSM = require('../../FSM/fsm-manager');
+let fsmModel = require('../../models/fsmmodel');
+let MockupTicker = require('./mockup-ticker').getInst();
 FSM.setTicker(MockupTicker);
 const TESTPID = "test-processId";
-var chatsim = require('chat/chatsim').getInst();
-var fsmEventEmitter = require('FSM/fsm-event-emitter.js');
+var chatsim = require('../../chat/chatsim').getInst();
+var fsmEventEmitter = require('../../FSM/fsm-event-emitter.js');
 var _ = require('underscore');
-var path = require('path');
 
 console.log('_________USE FDESCRIBE FOR SINGLE SPEC RUNS_________')
 
@@ -136,7 +133,7 @@ class StartProcessTick {
     return new Promise((resolve, reject) => {
       try {
         let fsmInfo = fsmModel.calcFsmInfo(fsm);
-        fsmModel.readFSM('./server/' + fsm, fsmInfo).then((fsm) => {
+        fsmModel.readFSM(fsm, fsmInfo).then((fsm) => {
           fsmModel.addFsm(fsm);
           // load the tree
           //let behaviorTree = new BehaviorTree("general-message-spec", 'general-message-spec', "general-message-spec");
@@ -190,8 +187,8 @@ class StartProcessTick {
   }
 
   /**
-   * 
-   * @param {string|Object} dataObjOrIntentId 
+   *
+   * @param {string|Object} dataObjOrIntentId
    */
   send(intentObj) {
     if (typeof intentObj === 'string') {
@@ -216,7 +213,7 @@ class StartProcessTick {
       intentObj.data = _.extend(intentObj1.data, intentObj);
     }
 
-    // send  
+    // send
     intentObj.data.userId = this.userId;
     return chatsim.onMessage(intentObj);
   }
@@ -228,8 +225,8 @@ class StartProcessTick {
 
 
   /**
-   * 
-   * @param {string|Object} dataObj 
+   *
+   * @param {string|Object} dataObj
    */
   expect(dataObj) {
     console.log('##### EXPECT ', dataObj);

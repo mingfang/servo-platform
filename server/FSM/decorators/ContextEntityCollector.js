@@ -1,18 +1,18 @@
-var b3 = require('FSM/core/b3')
-var Decorator = require('FSM/core/decorator');
+var b3 = require('../core/b3')
+var Decorator = require('../core/decorator');
 var _ = require('underscore');
-var dblogger = require('utils/dblogger');
-var statsManager = require('FSM/statsManager');
-var ContextManager = require('FSM/contextManager');
-var Utils = require('utils/utils');
+var dblogger = require('../../utils/dblogger');
+var statsManager = require('../statsManager');
+var ContextManager = require('../contextManager');
+var Utils = require('../../utils/utils');
 /**
- * One-child modifiers 
+ * One-child modifiers
  * @module Decorators
  */
 /**
  * Holds a context manager for its single child context. Its only feature is to collect entities from target,
- * based on the map defined in the parameters. could be used to pre-process messages by a  
- * 
+ * based on the map defined in the parameters. could be used to pre-process messages by a
+ *
  */
 class ContextEntityCollector extends Decorator {
   constructor() {
@@ -27,7 +27,7 @@ class ContextEntityCollector extends Decorator {
      * @type {Object}
      * @property {Array<EntitiesToContextMapItem>} parameters.entities - entities map. Each item carries an additional member -  mandatory boolean field
      * @property {boolean} parameters.returnWhenAllEntitiesCollected - return success when all entities collected, regardless of the child status
-     * 
+     *
      */
     this.parameters = _.extend(this.parameters, {
       returnWhenAllEntitiesCollected: false,
@@ -43,8 +43,8 @@ class ContextEntityCollector extends Decorator {
   }
 
   /**
-   * 
-   * @param {Tick} tick 
+   *
+   * @param {Tick} tick
    */
   open(tick) {
 
@@ -62,11 +62,11 @@ class ContextEntityCollector extends Decorator {
   }
 
   /**
-   * close this node and context 
-   * @param {Tick} tick 
+   * close this node and context
+   * @param {Tick} tick
    */
   close(tick, status) {
-    // move to the first context up    
+    // move to the first context up
     this.contextManager.close(tick, status);
   }
 

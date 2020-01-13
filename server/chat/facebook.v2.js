@@ -5,7 +5,7 @@ var dblogger = require('../utils/dblogger');
 var https = require('https');
 var FSMManager;
 var processModel = require('../models/processmodel');
-var config = require("config");
+var config = require("../config");
 var ChatDriverInterface = require("./chat-driver-interface");
 var PipeManager = require("../pipes/pipemanager");
 var MessageModel = require("../models/message-model");
@@ -26,7 +26,7 @@ class FacebookChatDriver extends ChatDriverInterface {
 
   /**
    * send typing indicator
-   * @param {*} on 
+   * @param {*} on
    */
   sendTyping(on, facebookProperties, toID) {
     let fbObj = {
@@ -39,16 +39,16 @@ class FacebookChatDriver extends ChatDriverInterface {
     return postRequest(facebookProperties.accessToken, '/v3.2/me/messages', fbObj);
   }
   /**
-   * 
+   *
    */
   stopAll() {}
 
   /**
-   * 
-   * @param {*} response 
-   * @param {*} process 
-   * @param {*} tree 
-   * @param {*} node 
+   *
+   * @param {*} response
+   * @param {*} process
+   * @param {*} tree
+   * @param {*} node
    */
   sendMessage(response, process, tree, node) {
 
@@ -216,7 +216,7 @@ function start(fsm) {
     validate(req, res, facebookOptions.validationToken);
   });
 
-  // TODO: re-add profile options. only after stop will reload one fsm only 
+  // TODO: re-add profile options. only after stop will reload one fsm only
   addProfileOptions(fsm);
   dblogger.flow('listen for facebook message for ' + fsm.id + ' on ' + config.serverBaseDomain + "/" + config.baseUrl + '/entry/fb/' + userDir + '/' + fsm.id);
 }
@@ -489,7 +489,7 @@ function actOnProcess(messageObj, processObj) {
 
   processObj.volatile('replayLastLeaf', !!counter);
   processObj.data('lastUserTimestamp', lastUserTimestamp);
-  // send typing signal 
+  // send typing signal
   if (!processObj.properties()['noTypingSignal']) {
     processObj.data('typingLastTimestamp', lastUserTimestamp);
     FacebookChatDriver.getInst().sendTyping(true, processObj.properties()['facebook'], messageObj.fromUser.id).catch((err) => {
@@ -656,13 +656,13 @@ function getCreateProcessesAndMessages(messageBody, fsm) {
 
 /**
  * create a @MessageObject
- * @param {Object} recipient 
- * @param {Object} sender 
- * @param {*} type 
- * @param {*} text 
- * @param {*} messengerType 
- * @param {string} fsmID 
- * 
+ * @param {Object} recipient
+ * @param {Object} sender
+ * @param {*} type
+ * @param {*} text
+ * @param {*} messengerType
+ * @param {string} fsmID
+ *
  * @return MessageModel
  */
 function createMessageObject(recipient, sender, type, text, messengerType, fsmID) {

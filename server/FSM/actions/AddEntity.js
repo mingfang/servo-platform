@@ -1,11 +1,11 @@
-var b3 = require('FSM/core/b3');
+var b3 = require('../core/b3');
 var _ = require('underscore');
-var Action = require('FSM/core/action');
-var utils = require('utils/utils');
-var dblogger = require('utils/dblogger');
+var Action = require('../core/action');
+var utils = require('../../utils/utils');
+var dblogger = require('../../utils/dblogger');
 
 /**
- * Set fields into the current message object. if entityName is intentId then it will set the intentId at the message 
+ * Set fields into the current message object. if entityName is intentId then it will set the intentId at the message
  * fieldValue should have a dot notation with the object name. Eg: message.text, context.amount etc '
  *  @memberof module:Actions
  */
@@ -39,7 +39,7 @@ class AddEntity extends Action {
   /**
    * Tick method.
    *
-   * @private 
+   * @private
    * @param {Tick} tick A tick instance.
    * @return {TickStatus} A status constant.
    **/
@@ -48,7 +48,7 @@ class AddEntity extends Action {
       var data = this.alldata(tick);
 
       var value = _.template(utils.wrapExpression(this.properties.fieldValue))(data);
-      let ContextManager = require('FSM/contextManager');
+      let ContextManager = require('../contextManager');
       if (this.properties.entityName === ContextManager.contextManagerKeys().INTENTID) {
         tick.target.getMessageObj().intentId = value;
       } else {

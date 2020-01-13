@@ -1,14 +1,14 @@
-var b3 = require('FSM/core/b3');
-var Condition = require('FSM/core/condition');
-var utils = require('utils/utils');
+var b3 = require('../core/b3');
+var Condition = require('../core/condition');
+var utils = require('../../utils/utils');
 var _ = require('underscore');
 /**
  * Conditions are used to control flow. They are derived from Condition class. As a general rule, conditions should be read only
  * @module Conditions
  **/
 /**
- * returns SUCCESS if the field is valid. field type is either email, credit card, phone number, or a formatted number 
- * 
+ * returns SUCCESS if the field is valid. field type is either email, credit card, phone number, or a formatted number
+ *
  */
 class IsValidField extends Condition {
 
@@ -33,9 +33,9 @@ class IsValidField extends Condition {
     }
 
     /**
-     * 
-     * @param {Tick} tick 
-     * @param {string} value 
+     *
+     * @param {Tick} tick
+     * @param {string} value
      */
     testEmail(tick, value) {
 
@@ -46,9 +46,9 @@ class IsValidField extends Condition {
 
 
     /**
-     * 
-     * @param {Tick} tick 
-     * @param {string} value 
+     *
+     * @param {Tick} tick
+     * @param {string} value
      */
     testCreditCard(tick, ccNumb) {
         /* This script and many more are available free online at
@@ -57,7 +57,7 @@ class IsValidField extends Condition {
 
             Basically, the alorithum takes each digit, from right to left and muliplies each second
             digit by two. If the multiple is two-digits long (i.e.: 6 * 2 = 12) the two digits of
-            the multiple are then added together for a new number (1 + 2 = 3). You then add up the 
+            the multiple are then added together for a new number (1 + 2 = 3). You then add up the
             string of numbers, both unaltered and new values and get a total sum. This sum is then
             divided by 10 and the remainder should be zero if it is a valid credit card. Hense the
             name Mod 10 or Modulus 10. */
@@ -87,7 +87,7 @@ class IsValidField extends Condition {
             bResult = false;
         }
 
-        // Determine if it is the proper length 
+        // Determine if it is the proper length
         if ((len == 0) && (bResult)) { // nothing, field is blank AND passed above # check
             bResult = false;
         } else { // ccNumb is a number and the proper length - let's see if it is a valid card number
@@ -142,9 +142,9 @@ class IsValidField extends Condition {
     }
 
     /**
-     * 
-     * @param {*} tick 
-     * @param {string} value 
+     *
+     * @param {*} tick
+     * @param {string} value
      */
     testPhoneNumber(tick, value) {
         function phonenumber1(inputtxt) {
@@ -176,10 +176,10 @@ class IsValidField extends Condition {
     }
 
     /**
-     * 
-     * @param {*} tick 
-     * @param {string} value 
-     * @param {string} mask 
+     *
+     * @param {*} tick
+     * @param {string} value
+     * @param {string} mask
      */
     testNumber(tick, value, mask) {
         let regex = mask.replace(/X/gi, '[0-9]');

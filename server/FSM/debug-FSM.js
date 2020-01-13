@@ -1,23 +1,23 @@
-var fsmModel = require('models/fsmmodel');
-var processModel = require("models/processmodel.js");
+var fsmModel = require('../models/fsmmodel');
+var processModel = require("../models/processmodel.js");
 var _breakpointReached;
 var FSMManager;
 var _ = require('underscore');
-var dblogger = require('utils/dblogger');
-const utils = require('utils/utils');
+var dblogger = require('../utils/dblogger');
+const utils = require('../utils/utils');
 /**
  * @memberof: module:Core
  * @private
  * @private  */
 /**
  * helper function
- * @param {*} fsm 
- * @param {*} bpData 
+ * @param {*} fsm
+ * @param {*} bpData
  * @private
  */
 function startOneProcess(fsm, bpData) {
-  FSMManager = require('FSM/fsm-manager');
-  var chatsim = require('chat/chatsim').getInst();
+  FSMManager = require('./fsm-manager');
+  var chatsim = require('../chat/chatsim').getInst();
   var messageObj = chatsim.createMessageObject('reciepient-' + bpData.processId, bpData.processId, "", bpData.fsmId, {});
 
   return new Promise((resolve) => {
@@ -40,8 +40,8 @@ function startOneProcess(fsm, bpData) {
 
 /**
  * return the full id based on user and id
- * @param {*} fsmId 
- * @param {*} userId 
+ * @param {*} fsmId
+ * @param {*} userId
  * @private  */
 function getFullFsmId(fsmId, userId) {
   // calculate root folder
@@ -60,7 +60,7 @@ function getFullFsmId(fsmId, userId) {
 class DebugFSM {
   /**
    * setting a single channel for all data
-   * @param {Function} breakpointReached 
+   * @param {Function} breakpointReached
    * @private  */
   static setBreakpointReachedCallback(breakpointReached) {
     _breakpointReached = breakpointReached;
@@ -68,10 +68,10 @@ class DebugFSM {
 
   /**
    * callback when breakpoint was reachd
-   * @param {*} bpReachData 
+   * @param {*} bpReachData
    * @private  */
   static breakpointReached(bpReachData) {
-    FSMManager = require('FSM/fsm-manager');
+    FSMManager = require('./fsm-manager');
     //FSMManager.tickPause(bpReachData.processId);
     bpReachData.protocol = 'debugger';
     bpReachData.breakpointReached = true;
@@ -82,7 +82,7 @@ class DebugFSM {
 
   static stop(bpData) {
     return new Promise((resolve, reject) => {
-      FSMManager = require('FSM/fsm-manager');
+      FSMManager = require('./fsm-manager');
       // stop the tick
       FSMManager.tickStop(bpData.processId);
       return processModel.deleteProcess(bpData.processId);
@@ -92,7 +92,7 @@ class DebugFSM {
 
   /**
    * forward to the next node
-   * @param {Object} bpData 
+   * @param {Object} bpData
    * @private  */
   static step(bpData) {
     return new Promise((resolve, reject) => {
@@ -121,7 +121,7 @@ class DebugFSM {
   }
   /**
    * run/continue
-   * @param {*} bpData 
+   * @param {*} bpData
    * @private  */
   static run(bpData) {
     return new Promise((resolve, reject) => {
@@ -156,9 +156,9 @@ class DebugFSM {
 
   /**
    * set a group of breakpoints
-   * @param {string} fsmId 
-   * @param {string} processId 
-   * @param {Object} bpData 
+   * @param {string} fsmId
+   * @param {string} processId
+   * @param {Object} bpData
    * @private  */
   static setAllBreakpoints(fsmId, processId, bpData, userId) {
     return new Promise((resolve, reject) => {
@@ -176,8 +176,8 @@ class DebugFSM {
 
   }
   /**
-   * 
-   * @param {*} nodeId 
+   *
+   * @param {*} nodeId
    * @private  */
   static setBreakpoint(bpData) {
     return new Promise((resolve, reject) => {
@@ -200,8 +200,8 @@ class DebugFSM {
 
   /**
    * clear a bp for an FSM
-   * @param {*} fsmId 
-   * @param {*} nodeId 
+   * @param {*} fsmId
+   * @param {*} nodeId
    * @private  */
   static clearBreakpoint(bpData) {
     return new Promise((resolve) => {

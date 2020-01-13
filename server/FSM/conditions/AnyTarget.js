@@ -1,13 +1,13 @@
-var b3 = require('FSM/core/b3');
-var Condition = require('FSM/core/condition');
-var utils = require('utils/utils');
+var b3 = require('../core/b3');
+var Condition = require('../core/condition');
+var utils = require('../../utils/utils');
 /**
  * Conditions are used to control flow. They are derived from Condition class. As a general rule, conditions should be read only
  * @module Conditions
  **/
 /**
  * Condition to return SUCCESS if any intent is present on the target
- * 
+ *
  */
 class AnyTarget extends Condition {
 

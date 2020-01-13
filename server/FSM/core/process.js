@@ -1,15 +1,15 @@
 var _ = require('underscore');
-var utils = require("utils/utils");
-var dblogger = require("utils/dblogger.js");
+var utils = require("../../utils/utils");
+var dblogger = require("../../utils/dblogger.js");
 var Promise = require('promise');
 var deepClone = require('clone-deep');
 var FSMManager;
 var ProcessModel;
 var Blackboard = require('./blackboard');
-var Target = require('FSM/core/target');
-var Tick = require('FSM/core/tick');
+var Target = require('../../FSM/core/target');
+var Tick = require('../../FSM/core/tick');
 /**
- * Process holds the nodes and trees memory, and serializes/deserializes them to the database abstraction layer 
+ * Process holds the nodes and trees memory, and serializes/deserializes them to the database abstraction layer
  * @memberof module:Core
  */
 class Process extends Blackboard {
@@ -48,8 +48,8 @@ class Process extends Blackboard {
 
   /**
    * add a root-level key to search by
-   * @param {string} keyName 
-   * @param {string} keyValueId 
+   * @param {string} keyName
+   * @param {string} keyValueId
    */
   addSearchKey(keyName, keyValueId) {
     this[keyName] = keyValueId;
@@ -57,7 +57,7 @@ class Process extends Blackboard {
 
   /**
    * remove the key
-   * @param {string*} keyName 
+   * @param {string*} keyName
    */
   removeSearchKey(keyName) {
     this[keyName] = null;
@@ -66,13 +66,13 @@ class Process extends Blackboard {
 
   /**
    * bring in the properties as a whole
-   * @param {*} props 
+   * @param {*} props
    */
   properties(props) {
     if (!props) {
       var properties = this.data('properties');
       if (!properties) {
-        dblogger = require('utils/dblogger');
+        dblogger = require('../../utils/dblogger');
         dblogger.error('no properties in process');
         properties = {};
         this.data('properties', properties);
@@ -85,11 +85,11 @@ class Process extends Blackboard {
   }
   /***
    * @typedef BreakpointData
-   * @property nodeId 
+   * @property nodeId
    */
   /**
-   * setBreakpoint 
-   * @param {BreakpointData} breakpointReached 
+   * setBreakpoint
+   * @param {BreakpointData} breakpointReached
    */
   setBreakpoint(bpData) {
     var breakpoints = this.volatile('breakpoints') || {};
@@ -101,7 +101,7 @@ class Process extends Blackboard {
 
   /**
    * clear breakpoint
-   * @param {string} nodeId 
+   * @param {string} nodeId
    */
   clearBreakpoint(nodeId) {
     var breakpoints = this.volatile('breakpoints') || {};
@@ -117,7 +117,7 @@ class Process extends Blackboard {
 
   /**
    * returns the breakpoints set on this node
-   * @param {string} nodeId 
+   * @param {string} nodeId
    */
   breakpoint(nodeId) {
     let bps = this.volatile('breakpoints') || {};
@@ -138,7 +138,7 @@ class Process extends Blackboard {
         // this.resetVolatile(vltMem);
         resolve(resultDocID);
       }).catch((err) => {
-        dblogger = require('utils/dblogger');
+        dblogger = require('../../utils/dblogger');
         dblogger.error('ProcessModel.upsert', this.summary(), err)
         reject(err);
       })
@@ -162,7 +162,7 @@ class Process extends Blackboard {
 
   /**
    * set / empty nodes volatile
-   * @param {Object} volMem 
+   * @param {Object} volMem
    */
   resetVolatile(volMem) {
     if (volMem) {
@@ -191,11 +191,11 @@ class Process extends Blackboard {
 
 
   /**
-   * sets process data. 
+   * sets process data.
    * pass no arguments to get all data
    * pass explicit null key to replace all data with value
-   * @param {string} [key] 
-   * @param {*} [value] 
+   * @param {string} [key]
+   * @param {*} [value]
    */
   data(key, value) {
 
@@ -214,12 +214,12 @@ class Process extends Blackboard {
         try {
           eval("processData." + key + "= value");
         } catch (ex) {
-          dblogger = require('utils/dblogger');
+          dblogger = require('../../utils/dblogger');
           dblogger.error('error in global/process.data(' + key + "," + value + "):", ex);
           processData[key] = value;
         }
       } else {
-        dblogger = require('utils/dblogger');
+        dblogger = require('../../utils/dblogger');
         dblogger.assert(_.isObject(value), "value needs to be an object to replace all of processData");
         processData = value;
       }
@@ -228,13 +228,13 @@ class Process extends Blackboard {
   }
 
   /**
-   * from Context tree and node ids,construct a Context object 
-   * @param {*} curCtxIds 
-   * @return {FoundContext} 
+   * from Context tree and node ids,construct a Context object
+   * @param {*} curCtxIds
+   * @return {FoundContext}
    */
   deserializeContext(curCtxIds0) {
 
-    FSMManager = require('FSM/fsm-manager');
+    FSMManager = require('../fsm-manager');
     // construct target
     let target = new Target();
     _.extend(target, deepClone(curCtxIds0.target));
@@ -250,7 +250,7 @@ class Process extends Blackboard {
     }
 
     if (!node || !node.contextManager) {
-      var dblogger = require('utils/dblogger');
+      var dblogger = require('../../utils/dblogger');
       console.trace();
       dblogger.error('node should have a context manager. current context entity ids:', curCtxIds0, curCtxIds);
       return;
@@ -269,7 +269,7 @@ class Process extends Blackboard {
 
   /**
    * return an object with ids and numbers, not with object
-   * @param {*} contextObj 
+   * @param {*} contextObj
    * @return {FoundContext}
    */
   serializeContext(contextObj) {
@@ -292,7 +292,7 @@ class Process extends Blackboard {
   }
 
   /**
-   * Get context entities ids and load context entity 
+   * Get context entities ids and load context entity
    * instances into volatile memory
    */
   loadContextEntities() {
@@ -309,7 +309,7 @@ class Process extends Blackboard {
 
   /**
    * sets the current contextManager and tick
-   * @param {FoundContext} crntCtxEtts 
+   * @param {FoundContext} crntCtxEtts
    */
   currentContextEntities(crntCtxEtts) {
     if (arguments.length === 1) {

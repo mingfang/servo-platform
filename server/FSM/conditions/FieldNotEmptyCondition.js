@@ -1,8 +1,8 @@
-var b3 = require('FSM/core/b3');
-var Condition = require('FSM/core/condition');
+var b3 = require('../core/b3');
+var Condition = require('../core/condition');
 var _ = require('underscore');
-var utils = require('utils/utils');
-var dblogger = require('utils/dblogger');
+var utils = require('../../utils/utils');
+var dblogger = require('../../utils/dblogger');
 
 /**
  * @typedef CompositeFieldName - a string denoting a memory field name, in the form of (global/context/message/volatile/local/fsm).fieldName. message is most recent message received from user. fsm refers to properties

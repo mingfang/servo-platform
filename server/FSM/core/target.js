@@ -1,32 +1,32 @@
 /**
- * Target - a queue of targets 
+ * Target - a queue of targets
  *
  * Copyright (c) 2017 Servo Labs Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to 
- * deal in the Software without restriction, including without limitation the 
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
  * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is 
+ * sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  * @private
- * 
+ *
  **/
 var deepClone = require('clone-deep');
 var b3 = require('./b3');
 /**
- * a target class maintaining a queue of outputs from NLU classifier layers 
+ * a target class maintaining a queue of outputs from NLU classifier layers
  *
  * @memberof module:Core
  **/
@@ -54,13 +54,13 @@ class Target {
    */
   /**
    * add a target object to the queue
-   * @param {TargetObject} targetObj 
+   * @param {TargetObject} targetObj
    */
   add(targetObj) {
-    var dblogger = require('utils/dblogger');
+    var dblogger = require('../../utils/dblogger');
     dblogger.flow('Add target. targets:' + (this.targetObjs.length + 1) + " intent:" + (targetObj.messageObj && targetObj.messageObj.intentId) + ". entities:", targetObj.messageObj && targetObj.messageObj.entities);
     this.passedThruPipe = false;
-    // start searching from the top 
+    // start searching from the top
     targetObj.searchContextDownwards = true;
 
     targetObj.usage = targetObj.usage || {};
@@ -74,7 +74,7 @@ class Target {
 
     this.targetObjs.unshift(targetObj);
     this.unusedTargetObjs.unshift(deepClone(targetObj));
-    var utils = require('utils/utils');
+    var utils = require('../../utils/utils');
     if (this.unusedTargetObjs.length > utils.longTermMemoryLength()) {
       this.unusedTargetObjs.pop();
     }
@@ -87,7 +87,7 @@ class Target {
    */
   remove() {
 
-    var dblogger = require('utils/dblogger');
+    var dblogger = require('../../utils/dblogger');
     dblogger.flow('remove target ' + this.summary());
     return this.targetObjs.pop();
   }
@@ -102,7 +102,7 @@ class Target {
 
 
   /**
-   * get last target object 
+   * get last target object
    * @return [TargetObject] - current target object in queue
    */
   get() {
@@ -110,7 +110,7 @@ class Target {
   }
 
   /**
-   * get last target object 
+   * get last target object
    * @return [TargetObject] - current target object in queue
    */
   getLatest() {
@@ -121,7 +121,7 @@ class Target {
     return this.unusedTargetObjs;
   }
   /**
-   * @return {string} last id 
+   * @return {string} last id
    */
   id() {
     return this.get().id;
@@ -130,7 +130,7 @@ class Target {
   /**
    * a wakeup message is relevant to non-push clients like Alexa
    * @return {boolean} true if the current message received is a wakeup event
-   * 
+   *
    */
   isFlowControl() {
     return this.getMessageObj() && (this.getMessageObj().wakeUp || this.getIntent() === b3.WAKEUP);
@@ -152,7 +152,7 @@ class Target {
   }
 
   /**
-   * @return 
+   * @return
    */
   getMessageObj() {
     return this.get() && this.get().messageObj;
@@ -167,9 +167,9 @@ class Target {
 
 
   /**
-   * get entity by name. if an array of entities with same name, get then entity by index 
-   * @param {string} entityName 
-   * @param {number} [index=0] 
+   * get entity by name. if an array of entities with same name, get then entity by index
+   * @param {string} entityName
+   * @param {number} [index=0]
    */
   getEntity(entityName, index = 0) {
     var entity = this.getMessageObj() &&
@@ -180,12 +180,12 @@ class Target {
 
   /**
    * use ettName, remove targetObj when all is used
-   * @param {string} ettName 
-   * @param {number} ettIndex 
+   * @param {string} ettName
+   * @param {number} ettIndex
    */
   useAndRemove(ettName, ettIndex = 0) {
     let msgObj = this.getMessageObj();
-    let ContextManager = require('FSM/contextManager');
+    let ContextManager = require('../contextManager');
     // if intentId is an array, remove the index
     if (ettName === ContextManager.contextManagerKeys().INTENTID) {
       msgObj.intentId = null;
@@ -218,10 +218,10 @@ class Target {
 
   /**
    * set a flag for using this entity for context mapping
-   * @param {string} ettName 
+   * @param {string} ettName
    * @param {number} ettIndex - the index of this entity in the message from NLU (in case there were several entities or a composite entity)
    * @param {number} depth - the depth at which it was used for mapping
-   * @return {number} 
+   * @return {number}
    */
   useEntity(ettName, ettIndex = 0) {
     if (this.passedThruPipe) {
@@ -238,7 +238,7 @@ class Target {
   }
 
   /**
-   * return a deep clone of this 
+   * return a deep clone of this
    */
   clone() {
     let trg = deepClone(this);

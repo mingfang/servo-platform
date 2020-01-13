@@ -1,24 +1,24 @@
 /**
  * BaseNode
  *
- * Copyright (c) 2017-2019 Servo Labs Inc.  
- * Copyright(c)  Renato de Pontes Pereira.  
+ * Copyright (c) 2017-2019 Servo Labs Inc.
+ * Copyright(c)  Renato de Pontes Pereira.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to 
- * deal in the Software without restriction, including without limitation the 
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
  * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is 
+ * sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  * @private
@@ -27,41 +27,41 @@ const _RUNNING_TIMEOUT_SEC = 3600; // an hour
 
 // requires
 var b3 = require("./b3");
-var messageBuilder = require('../message-builder')
-var chatManager = require('../../chat/chatmanager')
+var messageBuilder = require('../message-builder');
+var chatManager = require('../../chat/chatmanager');
 var _ = require('underscore');
-var dblogger = require('utils/dblogger');
-var utils = require('utils/utils');
-var config = require('config');
+var dblogger = require('../../utils/dblogger');
+var utils = require('../../utils/utils');
+var config = require('../../config');
 var Tick = require('./tick');
-var debugFSM = require('FSM/debug-FSM');
-let Target = require('FSM/core/target');
+var debugFSM = require('../debug-FSM');
+let Target = require('./target');
 /**
  * A string expression to be evaluated against all memory areas.
  * if contains <%= %> with composite variables with the format of (fsm., global., context, volatile., local., message.<field name> ),
- * it will be evaluated against an object with these member objects. Otherwise, evaluated literally. 
+ * it will be evaluated against an object with these member objects. Otherwise, evaluated literally.
  * FOR A STRING, ENCLOSE WITH 'COMMAS'!
- *@typedef ExpressionString 
+ *@typedef ExpressionString
  */
 /**
- * The BaseNode class is used as super class to all nodes in Servo. It 
+ * The BaseNode class is used as super class to all nodes in Servo. It
  * comprises all common variables and methods that a node must have to execute.
  *
- * *Do not inherit from this class, use `Composite`, 
+ * *Do not inherit from this class, use `Composite`,
  * `Decorator`, `Action` or `Condition`, instead.
  *
  * The attributes are specially designed to serialization of the node in a JSON
- * format. In special, the `parameters` attribute can be set into the visual 
- * editor (thus, in the JSON file), and it will be used as parameter on the 
+ * format. In special, the `parameters` attribute can be set into the visual
+ * editor (thus, in the JSON file), and it will be used as parameter on the
  * node initialization at `BehaviorTree.load`.
- * 
+ *
  * BaseNode also provide 5 lifecycle callback methods, which the node implementations can
- * override. They are `enter`, `open`, `tick`, `close` and `exit`. See their 
+ * override. They are `enter`, `open`, `tick`, `close` and `exit`. See their
  * documentation to know more. These callbacks are called inside the `_execute`
  * method, which is called in the tree traversal.
- * 
- * All leaf nodes timeouts after runningTimeoutSec, and closes with a failure until maxRetriesNumber reached, upon which it returns error. 
- * Question composite node AskAndMap has its own timeout behavior 
+ *
+ * All leaf nodes timeouts after runningTimeoutSec, and closes with a failure until maxRetriesNumber reached, upon which it returns error.
+ * Question composite node AskAndMap has its own timeout behavior
  * @memberof module:Core
  **/
 
@@ -70,17 +70,17 @@ class BaseNode {
 
   /**
    * initalize the node and its id. members are initialized for default values.
-   * @param {string} [id = undefined] 
+   * @param {string} [id = undefined]
    **/
   constructor(id) {
-    // not needed if we use a unique id from visual editor 
-    /** 
+    // not needed if we use a unique id from visual editor
+    /**
      * Node Id (typically a GUID)
-     *  @member {string} 
+     *  @member {string}
      **/
     this.id = id || b3.createUUID();
     /**
-     * Node name. Must be a unique identifier, preferable the same name of the 
+     * Node name. Must be a unique identifier, preferable the same name of the
      * class. You have to set the node name in the prototype.
      *  @member {string}
      */
@@ -91,7 +91,7 @@ class BaseNode {
     /** @member {string} */
     this.description = '';
     /**
-     * ContextManager reference. Defaults to null if no context manager on this node 
+     * ContextManager reference. Defaults to null if no context manager on this node
      * @member {ContextManager}  */
     this.contextManager = null;
 
@@ -100,11 +100,11 @@ class BaseNode {
     // We have 2 levels: default (from run time), and  editor, per specific node.
     // once its inside , its called 'settings'
 
-    /** 
-     * A dictionary (key, value) describing the node parameters. Useful for 
-     * defining parameter values in the visual editor. Note: this is only 
+    /**
+     * A dictionary (key, value) describing the node parameters. Useful for
+     * defining parameter values in the visual editor. Note: this is only
      * useful for nodes when loading trees from JSON files.
-     * @member {Object} 
+     * @member {Object}
      **/
     this.parameters = {
       'debug-log': '',
@@ -114,15 +114,15 @@ class BaseNode {
       "onError": b3.ERROR()
     };
 
-    /** 
-     * editor node properties 
+    /**
+     * editor node properties
      * @member {Object}
      * */
     this.properties = {};
 
     /**
-     * Node category. Must be `b3.COMPOSITE`, `b3.DECORATOR`, `b3.ACTION`  
-     * `b3.CONDITION` or b3.NLUMODEL. This is defined automatically be inheriting the 
+     * Node category. Must be `b3.COMPOSITE`, `b3.DECORATOR`, `b3.ACTION`
+     * `b3.CONDITION` or b3.NLUMODEL. This is defined automatically be inheriting the
      * correspondent class.
      * @member {string}
      **/
@@ -145,8 +145,8 @@ class BaseNode {
 
   /**
    * node log
-   * @param {Tick} tick 
-   * @param {string} text 
+   * @param {Tick} tick
+   * @param {string} text
    */
   log(tick, text) {
     dblogger.depthDebug(tick.depth, this.summary(tick), text);
@@ -154,7 +154,7 @@ class BaseNode {
 
   /**
    * node details summary
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   summary(tick) {
     return "title:" + this.title + "/name:" + this.name + "/nid:" + this.id.substr(0, 10) + "... " + " pid:" + tick.process.summary();
@@ -162,9 +162,9 @@ class BaseNode {
 
   /**
    * assert the condition and present node's summary and message if false
-   * @param {Tick} tick 
-   * @param {Boolean} cond 
-   * @param {string} message 
+   * @param {Tick} tick
+   * @param {Boolean} cond
+   * @param {string} message
    */
   assert(tick, cond, message) {
     dblogger.assert(cond, this.summary(tick) + " " + message)
@@ -178,21 +178,21 @@ class BaseNode {
     **/
 
   /**
-      * A number representing the status returned from the tick. 
+      * A number representing the status returned from the tick.
       1: success
-      2: failure 
-      3: running 
-      4: error 
+      2: failure
+      3: running
+      4: error
      @typedef {number} TickStatus
     **/
 
   /**
    * Searches up to tree root and return the first contextManager entities found
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @return {ContextManagerEntities}
    */
   findContextManagerEntities(tick) {
-    /* 
+    /*
       // if there's a true ambiguity, it means that two fields exist with same name, that belongs to different contextual conversations.
       // for example, say we have an assistant with two convos - 'banking' and 'travel'. score selector node selects between the two.
       // then  banking assistant, with two convos - transfer money and on 'deposit check'.
@@ -219,7 +219,7 @@ class BaseNode {
   /**
    * publish an event up the tree
    * TODO: fix
-   * @private 
+   * @private
    */
   emit(tick, event, params) {
     let parentEtts = this.parentEntities(tick);
@@ -241,7 +241,7 @@ class BaseNode {
 
 
   /**
-   * upon tree creation, this method is called after the node has been connected to its parents or children 
+   * upon tree creation, this method is called after the node has been connected to its parents or children
    */
   postConnect() {
 
@@ -249,8 +249,8 @@ class BaseNode {
 
   /**
    * returns an object with all the entities that are key, all the way to the root
-   * @param {*} tick 
-   * @param {*} key 
+   * @param {*} tick
+   * @param {*} key
    */
   aggregateObjectContextField(tick, ettkey) {
     let contextMgr = this.contextManager;
@@ -263,7 +263,7 @@ class BaseNode {
       if (aggregatedEtts[key]) {
         // // and not an array yet
         // if (!_.isArray(aggregatedEtts[key])) {
-        //   // then make it an array 
+        //   // then make it an array
         //   aggregatedEtts[key] = [aggregatedEtts[key]];
         // }
         // and add
@@ -275,7 +275,7 @@ class BaseNode {
 
     }
 
-    // for this context 
+    // for this context
     let contextBorderPassed = false;
     while (contextMgr) {
       let etts = contextMgr.getContextMemory(ctxTick)[ettkey];
@@ -283,7 +283,7 @@ class BaseNode {
         // if it's an object, we dont override
         addEtt(etts[ettObjKey], ettObjKey);
       }
-      // we pass one newContext and then break 
+      // we pass one newContext and then break
       if (contextBorderPassed) {
         break;
       }
@@ -301,11 +301,11 @@ class BaseNode {
   /**
    * returns an object that is a merge between all contexts up to the root
    * lower context members override the upper ones
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   collectContextsUpToRoot(tick) {
 
-    var ContextManager = require('FSM/contextManager');
+    var ContextManager = require('../contextManager');
     var contextManagerEtts = this.findContextManagerEntities(tick);
     var contextObj = {};
     // while in context
@@ -321,7 +321,7 @@ class BaseNode {
             let aggregatedEtts = contextManager.node.aggregateObjectContextField(contextManagerEtts.tick, ettkey);
             contextObj[ettkey] = aggregatedEtts;
           } else {
-            // if the entity is a string, return always the most recent one 
+            // if the entity is a string, return always the most recent one
             contextObj[ettkey] = contextMem[ettkey];
 
           }
@@ -338,7 +338,7 @@ class BaseNode {
    * sets context data.
    * pass only tick to get all context mem
    * pass explicit null key to replace data all with value
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @param {string} [key = null]
    * @param {string} [value = null] if non-null, sets the value
    */
@@ -388,10 +388,10 @@ class BaseNode {
   }
 
   /**
-   * 
-   * @param {Tick} tick 
-   * @param {?string} compositeFieldName, a field name composed of <memorytype>.<property> eg context.myname 
-   * @param {?string} fieldValue 
+   *
+   * @param {Tick} tick
+   * @param {?string} compositeFieldName, a field name composed of <memorytype>.<property> eg context.myname
+   * @param {?string} fieldValue
    */
   alldata(tick, compositeFieldName = null, fieldValue = null) {
     if (arguments.length === 1) {
@@ -489,9 +489,9 @@ class BaseNode {
 
   /**
    * get/set process data
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @param {string} [key = null]
-   * @param {string} [value = null] if non-null, sets the value 
+   * @param {string} [value = null] if non-null, sets the value
    */
   global(tick, key = null, value = null) {
 
@@ -518,9 +518,9 @@ class BaseNode {
   }
   /**
    * set/get local node memory
-   * @param {Tick} tick 
-   * @param {string} [key=null] 
-   * @param {(string|number|boolean)} [ value = null] if non-null, sets the value 
+   * @param {Tick} tick
+   * @param {string} [key=null]
+   * @param {(string|number|boolean)} [ value = null] if non-null, sets the value
    */
   local(tick, key = null, value = null) {
 
@@ -536,9 +536,9 @@ class BaseNode {
   }
   /**
    * Volatile memory get/setter - memory will not persist beyond machine/running restart
-   * @param {Tick} tick 
-   * @param {string} key 
-   * @param {(string|number|Object)} [value] 
+   * @param {Tick} tick
+   * @param {string} key
+   * @param {(string|number|Object)} [value]
    */
   volatile(tick, key, value = undefined) {
     if (arguments.length === 3) {
@@ -553,9 +553,9 @@ class BaseNode {
   }
 
   /**
-   * 
+   *
    * @param {Tick} tick
-   * @returns {Target} tick target. its been unused at this time 
+   * @returns {Target} tick target. its been unused at this time
    */
   searchTarget(tick) {
     return tick.target;
@@ -563,7 +563,7 @@ class BaseNode {
 
   /**
    * return the closest target object up the tree
-   * @param {*} tick 
+   * @param {*} tick
    */
   target(tick, command) {
     let cframesNode = this.findContextManagerEntities(tick).node;
@@ -580,9 +580,9 @@ class BaseNode {
   }
 
   /**
-   * 
-   * @param {Tick} tick 
-   * @param {string} [property=null] 
+   *
+   * @param {Tick} tick
+   * @param {string} [property=null]
    * @param {string} [value=null] if non-null, sets the value
    */
   message(tick, property = null, value = null) {
@@ -610,9 +610,9 @@ class BaseNode {
 
   /**
    * set volatile memory property for a RUNNING instance of THIS NODE
-   * @param {Tick} tick 
-   * @param {string} property 
-   * @param {(string|number)} value 
+   * @param {Tick} tick
+   * @param {string} property
+   * @param {(string|number)} value
    */
   set(tick, property, value) {
     this.setVolMem(tick, property, value);
@@ -620,8 +620,8 @@ class BaseNode {
 
   /**
    * get volatile memory property for a RUNNING instance of THIS NODE
-   * @param {Tick} tick 
-   * @param {string} property 
+   * @param {Tick} tick
+   * @param {string} property
    */
   get(tick, property) {
     return tick.process.get(property, tick.tree.id, this.id, true /*volatile*/ );
@@ -629,7 +629,7 @@ class BaseNode {
 
 
   /**
-   * We put values on volatileMemory so they dont get saved in the DB 
+   * We put values on volatileMemory so they dont get saved in the DB
    * so they are reset if the server is down
    * @private
    */
@@ -648,7 +648,7 @@ class BaseNode {
 
   /**
    * returns properties.payload or undefined if  empty
-   * @return {?string} 
+   * @return {?string}
    */
   payload() {
     return this.properties &&
@@ -657,7 +657,7 @@ class BaseNode {
   }
 
   /**
-   * returns the properties.image or images  
+   * returns the properties.image or images
    * @return {?string}
    */
   images() {
@@ -675,13 +675,13 @@ class BaseNode {
   }
 
   /**
-   * returns the text prompt for the message out. 
+   * returns the text prompt for the message out.
    * properties.fieldName if any,otherwise properties.prompt
-   * @param {string} fieldName 
+   * @param {string} fieldName
    */
   prompt(fieldName = undefined) {
     var prompt = this.properties &&
-      ((this.properties[fieldName] !== "" && this.properties[fieldName]) || this.properties.prompt);
+        ((this.properties[fieldName] !== "" && this.properties[fieldName]) || this.properties.prompt);
 
     if (prompt && Array.isArray(prompt) && !prompt.length) {
       prompt = false;
@@ -695,7 +695,7 @@ class BaseNode {
 
   /**
    * executes fn until timeoutMs reached
-   * @param {Function}  fn - function to execute  
+   * @param {Function}  fn - function to execute
    * @param {Array|Object} args - arguments array
    * @param {number} [timeoutMs=30000] - timeout interval
    */
@@ -728,7 +728,7 @@ class BaseNode {
   /**
    * output the message base on process data
    *
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @param {string} [fieldName] - use when building the prompt
    */
   outputMessage(tick, fieldName) {
@@ -773,7 +773,7 @@ class BaseNode {
    * send a message method.
    *
    * output a message asynchrously
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @param {string} [fieldName] - to use when building a message. ,instead of prompt
    * @return {TickStatus} A state constant.
    **/
@@ -783,7 +783,7 @@ class BaseNode {
       this.waitCode(tick, b3.RUNNING());
       this.wait(this.outputMessage, [tick, fieldName], -1).then(() => {
         this.waitCode(tick, b3.SUCCESS());
-        //  save on next tick, so (1) we wont get stuck on running (2) we get all composites to reflect right child indexes 
+        //  save on next tick, so (1) we wont get stuck on running (2) we get all composites to reflect right child indexes
         setTimeout(() => {
           tick.process.save();
         }, 0);
@@ -801,7 +801,7 @@ class BaseNode {
 
   /**
    * close and reopens  the node
-   * @param {*} tick 
+   * @param {*} tick
    */
   reopen(tick) {
     this._close(tick);
@@ -812,9 +812,9 @@ class BaseNode {
 
 
   /**
-   * 
-   * @param {Tick} tick 
-   * @param {string} err 
+   *
+   * @param {Tick} tick
+   * @param {string} err
    * @param {boolean} waitCode true if waitcode is used
    */
   onError(tick, err, waitCode = true) {
@@ -860,8 +860,8 @@ class BaseNode {
 
   /**
    * true if this node timeouted
-   * @param {*} tick 
-   * @return {boolean} 
+   * @param {*} tick
+   * @return {boolean}
    *   */
   isNodeTimeout(tick) {
     var openTime = tick.process.get('openTime', tick.tree.id, this.id);
@@ -872,7 +872,7 @@ class BaseNode {
 
   /**
    * true if this is a leaf which timeouts (and we are not sitting on a breakpoint)
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @return {boolean}
    */
   isLeafTimeout(tick) {
@@ -908,7 +908,7 @@ class BaseNode {
 
   /**
    * find the direct context of this node and clear it
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   clearContext(tick) {
     var contextManagerEtts = this.findContextManagerEntities(tick);
@@ -918,7 +918,7 @@ class BaseNode {
 
   /**
    * find the current context and close its children
-   * @param {*} tick 
+   * @param {*} tick
    */
   closeAllContexts(tick) {
     var contextManagerEtts = this.findContextManagerEntities(tick);
@@ -931,8 +931,8 @@ class BaseNode {
   }
 
   /**
-   * clear all the sibling contexts of this node 
-   * @param {Tick} tick 
+   * clear all the sibling contexts of this node
+   * @param {Tick} tick
    * @param {boolean} leaveCurrent
    */
   clearAllContexts(tick, leaveCurrent) {
@@ -943,7 +943,7 @@ class BaseNode {
 
   /**
    * open only if node is not opened
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   safeOpen(tick) {
     if (!tick.process.get('isOpen', tick.tree.id, this.id)) {
@@ -953,7 +953,7 @@ class BaseNode {
 
   /**
    * remove target from context and tick
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   removeTargets(tick) {
     // remove last targets
@@ -966,10 +966,10 @@ class BaseNode {
 
 
   /**
-   * This is the main method to propagate the tick signal to this node. This 
-   * method calls all callbacks: `enter`, `open`, `tick`, `close`, and 
-   * `exit`. It only opens a node if it is not already open. In the same 
-   * way, this method only close a node if the node  returned a status 
+   * This is the main method to propagate the tick signal to this node. This
+   * method calls all callbacks: `enter`, `open`, `tick`, `close`, and
+   * `exit`. It only opens a node if it is not already open. In the same
+   * way, this method only close a node if the node  returned a status
    * different of `b3.RUNNING()`.
    *
    * @private _execute
@@ -1009,7 +1009,7 @@ class BaseNode {
 
   /**
    * create a new tick object that is relevant to the tree ABOVE this node
-   * @param {Tick} tick 
+   * @param {Tick} tick
    */
   createParentTick(tick) {
     var newTick = new Tick();
@@ -1025,7 +1025,7 @@ class BaseNode {
 
   /**
    * return entities representing the parent;
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @return ContextManagerEntities
    */
   parentEntities(tick) {
@@ -1043,15 +1043,15 @@ class BaseNode {
 
   /**
    * find the last ticked leaf which decendent of this node
-   * @param {Tick} tick 
+   * @param {Tick} tick
    * @param {BaseNode} node
-   * @return {ContextManagerEntities} 
+   * @return {ContextManagerEntities}
    */
   findCurrentWaitNode(tick, node) {
     /** @type {Composite} */
     let node2 = node;
     if (!node || node.category === b3.ACTION || node.category === b3.CONDITION ||
-      (node.category === b3.COMPOSITE && node2.currentChildIndex(tick) < 0)) { // the last could happen on AskAndMap/PrioritySelector when no child has been selected. this means, that it is effectively a leaf 
+      (node.category === b3.COMPOSITE && node2.currentChildIndex(tick) < 0)) { // the last could happen on AskAndMap/PrioritySelector when no child has been selected. this means, that it is effectively a leaf
       return {
         node: node,
         tick: tick
@@ -1120,15 +1120,15 @@ class BaseNode {
     }
 
 
-    // reset timeout retries 
+    // reset timeout retries
     this.resetTimeoutRetries(tick);
 
     this.open(tick);
   }
 
   /**
-   * 
-   * @param {*} tick 
+   *
+   * @param {*} tick
    */
   resetTimeoutRetries(tick) {
     this.local(tick, 'retriesCounter', 0);
@@ -1147,8 +1147,8 @@ class BaseNode {
 
   /**
    * logger function to run if debug-log is truthy
-   * @param {Tick} tick 
-   * @param {TickStatus} status 
+   * @param {Tick} tick
+   * @param {TickStatus} status
    */
   debugLog(tick, status) {
 
@@ -1196,7 +1196,7 @@ class BaseNode {
     //this.local(tick, 'lastStatus', status);
     this.debugLog(tick, status);
 
-    // handle post breakpoint 
+    // handle post breakpoint
     status = this.handleBreakpoint(tick, status, 'post');
 
     return status;
@@ -1205,19 +1205,19 @@ class BaseNode {
 
   /**
    * structured error report
-   * @param {Tick} tick 
-   * @param {*} message 
-   * @param {*} ex 
+   * @param {Tick} tick
+   * @param {*} message
+   * @param {*} ex
    */
   error(tick, message, ex = {}) {
     dblogger.error("ERROR IN:" + this.summary(tick) + ":\r\n " + message + ":" + ex.message + " at \r\n" + ex.stack);
   }
 
   /**
-   * 
-   * @param {Tick} tick 
-   * @param {TickStatus} status 
-   * @param {string} type 
+   *
+   * @param {Tick} tick
+   * @param {TickStatus} status
+   * @param {string} type
    */
   handleBreakpoint(tick, status, type) {
     let breakpoint = tick.process.breakpoint(this.id);
@@ -1259,8 +1259,8 @@ class BaseNode {
 
   /**
    * getter
-   * @param {Tick} tick 
-   * @param {TickStatus} [retcode=undefined] 
+   * @param {Tick} tick
+   * @param {TickStatus} [retcode=undefined]
    */
   waitCode(tick, retcode = undefined) {
 
@@ -1281,7 +1281,7 @@ class BaseNode {
    * Wrapper for close method.
    *
    * @param {Tick} tick A tick instance.
-   * @param {TickStatus} [status] 
+   * @param {TickStatus} [status]
    *  @protected
    **/
   _close(tick, status) {
@@ -1289,9 +1289,9 @@ class BaseNode {
   }
 
   /**
-   * closes the node 
-   * @param {Tick} tick 
-   * @param {TickStatus} [status] 
+   * closes the node
+   * @param {Tick} tick
+   * @param {TickStatus} [status]
    */
   _closeMe(tick, status) {
     //console.log('closeMe:' + this.summary(tick))
@@ -1322,8 +1322,8 @@ class BaseNode {
   }
 
   /**
-   * increment number Retries 
-   * @param {Tick} tick 
+   * increment number Retries
+   * @param {Tick} tick
    * @return {number} retries couont
    */
   incrementRetries(tick) {
@@ -1346,19 +1346,19 @@ class BaseNode {
   }
 
   /**
-   * Enter method, override this to use. It is called every time a node is 
+   * Enter method, override this to use. It is called every time a node is
    * asked to execute, before the tick itself.
    * if return undefined, will now enter into tick - disregarding the node
    * @param {Tick} tick A tick instance.
    * @return {void}
    **/
   enter(tick) {
-    // always allow entry as default 
+    // always allow entry as default
     return;
   }
 
   /**
-   * Open method, override this to use. It is called only before the tick 
+   * Open method, override this to use. It is called only before the tick
    * callback and only if the not isn't closed.
    *
    * Note: a node will be closed if it returned `b3.RUNNING()` in the tick.
@@ -1368,7 +1368,7 @@ class BaseNode {
   open(tick) {}
 
   /**
-   * Tick method, override this to use. This method must contain the real 
+   * Tick method, override this to use. This method must contain the real
    * execution of node (perform a task, call children, etc.). It is called
    * every time a node is asked to execute.
    *
@@ -1381,17 +1381,17 @@ class BaseNode {
 
   /**
    * Close method, override this to use. This method is called after the tick
-   * callback, and only if the tick return a state different from 
+   * callback, and only if the tick return a state different from
    * `b3.RUNNING()`.
    *
    * @private close
    * @param {Tick} tick A tick instance.
-   * @param {TickStatus} [status] 
+   * @param {TickStatus} [status]
    **/
   close(tick, status) {}
 
   /**
-   * Exit method, override this to use. Called every time in the end of the 
+   * Exit method, override this to use. Called every time in the end of the
    * execution.
    *
    * @private exit
@@ -1442,8 +1442,8 @@ class BaseNode {
   /**
    * if already haas a context selected, give search the **curent** context  by the entities
    * override if the search needs to be different
-   * @param {Tick} tick 
-   * @param {MessageModel} msgObj 
+   * @param {Tick} tick
+   * @param {MessageModel} msgObj
    * @param {Object} curCtxParam
    * @return {number} - match counter
    */
