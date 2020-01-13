@@ -1,6 +1,6 @@
-var config = require('config');
+var config = require('../config');
 //Html to image thing using node-webshot
-var webshot = require('webshot');
+var webshot = require('webshot-node');
 var crypto = require('crypto');
 var _ = require('underscore');
 var Base64 = require("js-base64").Base64;
@@ -16,7 +16,7 @@ Utils.longTermMemoryLength = function () {
 };
 /**
  * returns true if empty array, empty string, null, undefined or ""
- * returns false on 
+ * returns false on
  * @param {*} s 5
  */
 Utils.isEmpty = function (s) {
@@ -38,7 +38,7 @@ Utils.serverToUserTime = function (tick, fieldNameOrNumber) {
   // calculation example: if user on gmt+1 (eg spain)
   // userOffset would be 1
   // serverOffset is 3*60 = 180
-  // so 4 server time, in user time would be 4 + 1 - 3 = 2  
+  // so 4 server time, in user time would be 4 + 1 - 3 = 2
   var serverOffset = -someDate.getTimezoneOffset();
   var timeToCalc = fieldNameOrNumber ? (typeof fieldNameOrNumber === "string" ? tick.process.data(fieldNameOrNumber) : fieldNameOrNumber) : Date.now();
   return timeToCalc +
@@ -48,8 +48,8 @@ Utils.serverToUserTime = function (tick, fieldNameOrNumber) {
 
 /**
  * user to server time
- * @param {*} tick 
- * @param {*} fieldNameOrNumber 
+ * @param {*} tick
+ * @param {*} fieldNameOrNumber
  */
 Utils.userToServerTime = function (tick, fieldNameOrNumber) {
   var serverOffset = -someDate.getTimezoneOffset();
@@ -71,7 +71,7 @@ Utils.wrapExpression = function (expression) {
 
 /**
  * wrap in quotes if x is a string that is not a number, otherwise returns a number
- * @param {*} x 
+ * @param {*} x
  */
 Utils.addQuotes = function (x) {
   if (typeof x === 'string' && Utils.safeIsNaN(x)) {
@@ -87,7 +87,7 @@ Utils.addQuotes = function (x) {
 
 /**
  * converts snake to camel case
- * @param {*} s 
+ * @param {*} s
  */
 Utils.snakeToCamel = function (s) {
   return s.replace(/(\-\w)/g, function (m) {
@@ -97,7 +97,7 @@ Utils.snakeToCamel = function (s) {
 
 /**
  * returns true if x is NaN, "", undefined, null, or boolean
- * @param {*} x 
+ * @param {*} x
  */
 Utils.safeIsNaN = function (x) {
   return (isNaN(x) || x === "" || x === null || x === undefined || typeof x === "boolean" || typeof x === "object");
@@ -121,7 +121,7 @@ Utils.formatDate = function (dateStr, year, weekday) {
 
 /**
  * return true if truthy OR 0
- * @param {*} value 
+ * @param {*} value
  */
 Utils.isTruthyOr0 = function (value) {
   return value || value === 0;
@@ -129,7 +129,7 @@ Utils.isTruthyOr0 = function (value) {
 
 /**
  * normalize phone number
- * @param {*} phone 
+ * @param {*} phone
  */
 Utils.normalizeNumber = function (phone) {
 
@@ -156,16 +156,16 @@ Utils.getArgumentNames = function (func) {
 };
 
 /**
- * 
+ *
  * @param {string} intent id
- * @return {Boolean} true if this intent represent a none - meaning, no intent was found by the NLU 
+ * @return {Boolean} true if this intent represent a none - meaning, no intent was found by the NLU
  */
 Utils.isNone = function (value) {
   return value && value.toLowerCase() === 'none';
 };
 /**
  * idenify a cyclic object
- * @param {*} obj 
+ * @param {*} obj
  */
 Utils.isCyclic = function (obj) {
   var keys = [];
@@ -252,7 +252,7 @@ Utils.safeAdd = function (obj, key, val) {
 /**
  * get the time of day toString
  * if we need a default
- * 
+ *
  */
 Utils.timeOfDay = function (tick) {
 
@@ -349,7 +349,7 @@ Utils.evalCondition = (tick, node) => {
   right = Utils.addQuotes(right);
   result = eval(left + operator + right);
 
-  var b3 = require('FSM/core/b3');
+  var b3 = require('../FSM/core/b3');
   if (result) {
     return b3.SUCCESS();
   } else {
